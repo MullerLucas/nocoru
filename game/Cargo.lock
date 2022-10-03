@@ -567,6 +567,9 @@ dependencies = [
 [[package]]
 name = "hell_utils"
 version = "0.1.0"
+dependencies = [
+ "hell_common",
+]
 
 [[package]]
 name = "hell_winit"

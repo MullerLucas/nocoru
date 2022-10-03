@@ -1,6 +1,6 @@
 use hell_app::HellGame;
 use hell_app::scene::Scene;
-use hell_common::HellResult;
+use hell_common::prelude::*;
 use hell_common::transform::Transform;
 use hell_resources::ResourceManager;
 
@@ -13,10 +13,10 @@ fn main() {
     let game = Box::new(NocoruGame::new());
     let leaked_box = Box::leak(game);
 
-    let mut app = hell_app::HellApp::new(&win, leaked_box).unwrap();
+    let mut app = hell_app::HellApp::new(&win, leaked_box).expect("failed to create hell-app");
 
     let scene = app.create_scene();
-    app.load_scene(scene).unwrap();
+    app.load_scene(scene).expect("failed to load scene");
 
     win.main_loop(app);
 }
