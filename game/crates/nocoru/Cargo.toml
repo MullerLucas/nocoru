@@ -7,5 +7,8 @@ edition = "2021"
 
 [dependencies]
 
-hell_app   = { path = "../../../hellengine/crates/hell_app" }
-hell_winit = { path = "../../../hellengine/crates/hell_winit" }
+hell_common    = { path = "../../../hellengine/crates/hell_common" }
+hell_app       = { path = "../../../hellengine/crates/hell_app" }
+hell_winit     = { path = "../../../hellengine/crates/hell_winit" }
+hell_renderer  = { path = "../../../hellengine/crates/hell_renderer" }
+hell_resources = { path = "../../../hellengine/crates/hell_resources" }
