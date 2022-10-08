@@ -528,6 +528,7 @@ name = "hell_app"
 version = "0.1.0"
 dependencies = [
  "hell_common",
+ "hell_error",
  "hell_renderer",
  "hell_resources",
 ]
@@ -537,7 +538,12 @@ name = "hell_common"
 version = "0.1.0"
 dependencies = [
  "glam",
+ "hell_error",
 ]
+
+[[package]]
+name = "hell_error"
+version = "0.1.0"
 
 [[package]]
 name = "hell_renderer"
@@ -546,6 +552,7 @@ dependencies = [
  "ash",
  "glam",
  "hell_common",
+ "hell_error",
  "hell_resources",
  "hell_utils",
  "image",
@@ -558,7 +565,7 @@ dependencies = [
 name = "hell_resources"
 version = "0.1.0"
 dependencies = [
- "hell_common",
+ "hell_error",
  "image",
  "serde",
  "serde_yaml",
@@ -568,15 +575,16 @@ dependencies = [
 name = "hell_utils"
 version = "0.1.0"
 dependencies = [
- "hell_common",
+ "hell_error",
 ]
 
 [[package]]
-name = "hell_winit"
+name = "hell_window"
 version = "0.1.0"
 dependencies = [
  "hell_app",
  "hell_common",
+ "hell_error",
  "hell_renderer",
  "winit",
 ]
@@ -859,9 +867,10 @@ version = "0.1.0"
 dependencies = [
  "hell_app",
  "hell_common",
+ "hell_error",
  "hell_renderer",
  "hell_resources",
- "hell_winit",
+ "hell_window",
 ]
 
 [[package]]

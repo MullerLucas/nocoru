@@ -1,14 +1,15 @@
 use hell_app::HellGame;
 use hell_app::scene::Scene;
-use hell_common::prelude::*;
 use hell_common::transform::Transform;
+use hell_error::HellResult;
 use hell_resources::ResourceManager;
+use hell_window::WinitWindow;
 
 
 
 
 fn main() {
-    let win = hell_winit::WinitWindow::new("hell-app", 800, 600).expect("failed to create window");
+    let win = WinitWindow::new("hell-app", 800, 600).expect("failed to create window");
 
     let game = Box::new(NocoruGame::new());
     let leaked_box = Box::leak(game);
