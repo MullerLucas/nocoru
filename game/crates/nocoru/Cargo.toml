@@ -9,7 +9,11 @@ edition = "2021"
 
 hell_common    = { path = "../../../hellengine/crates/hell_common" }
 hell_error     = { path = "../../../hellengine/crates/hell_error" }
+hell_input     = { path = "../../../hellengine/crates/hell_input" }
 hell_app       = { path = "../../../hellengine/crates/hell_app" }
-hell_window    = { path = "../../../hellengine/crates/hell_window" }
+hell_winit     = { path = "../../../hellengine/crates/hell_winit" }
 hell_renderer  = { path = "../../../hellengine/crates/hell_renderer" }
 hell_resources = { path = "../../../hellengine/crates/hell_resources" }
+hell_physics   = { path = "../../../hellengine/crates/hell_physics" }
+
+glam = "0.21.3"
