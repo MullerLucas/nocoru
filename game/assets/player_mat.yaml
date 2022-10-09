@@ -2,4 +2,5 @@ material:
   textures:
     main_tex:
       path: "assets/player_tex.png"
+      # path: "assets/ground_1_tex.png"
 

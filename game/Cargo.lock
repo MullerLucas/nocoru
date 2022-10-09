@@ -534,6 +534,7 @@ name = "hell_app"
 version = "0.1.0"
 dependencies = [
  "hell_common",
+ "hell_core",
  "hell_error",
  "hell_input",
  "hell_renderer",
@@ -547,6 +548,10 @@ dependencies = [
  "glam",
  "hell_error",
 ]
+
+[[package]]
+name = "hell_core"
+version = "0.1.0"
 
 [[package]]
 name = "hell_error"
@@ -578,6 +583,7 @@ dependencies = [
  "ash",
  "glam",
  "hell_common",
+ "hell_core",
  "hell_error",
  "hell_resources",
  "hell_utils",
@@ -591,6 +597,7 @@ dependencies = [
 name = "hell_resources"
 version = "0.1.0"
 dependencies = [
+ "hell_core",
  "hell_error",
  "image",
  "serde",

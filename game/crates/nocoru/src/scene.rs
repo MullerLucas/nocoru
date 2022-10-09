@@ -8,8 +8,9 @@ use hell_resources::ResourceManager;
 
 use crate::systems::{MovementSystem, MovementData};
 
+
+
 pub struct NocoruScene {
-    texture_paths: Vec<&'static str>,
     material_paths: Vec<&'static str>,
 
     pub scene_data: SceneData,
@@ -23,18 +24,13 @@ pub struct NocoruScene {
 
 impl NocoruScene {
     pub const PLAYER_IDX: usize = 0;
-    pub const ENEMY_COUNT: usize = 2;
+}
 
+impl NocoruScene {
     pub fn new_scene_1() -> Self {
 
         let scene_data = SceneData::default();
         let render_data = RenderData::default();
-
-        let texture_paths = vec![
-            "assets/player_tex.png",
-            "assets/enemy_1_tex.png",
-            "assets/enemy_2_tex.png",
-        ];
 
         let material_paths = vec![
             "assets/player_mat.yaml",
@@ -51,7 +47,6 @@ impl NocoruScene {
 
 
         Self {
-            texture_paths,
             material_paths,
 
             scene_data,
@@ -65,10 +60,8 @@ impl NocoruScene {
     }
 
     pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
-        for tex in &self.texture_paths {
-            let _ = resource_manager.load_image(tex, true)?;
-        }
-
+        // load materials
+        // --------------
         for mat in &self.material_paths {
             let mat_idx = resource_manager.load_material(mat)?;
             self.render_data.add_data(0, mat_idx, Transform::default());

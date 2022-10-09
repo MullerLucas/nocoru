@@ -16,5 +16,6 @@ layout(location = 0) out vec4 out_color;
 
 
 void main() {
-    out_color = scene_data.tint * texture(texture_sampler, in_tex_coord);
+    // out_color = scene_data.tint * texture(texture_sampler, in_tex_coord);
+    out_color = texture(texture_sampler, in_tex_coord);
 }
