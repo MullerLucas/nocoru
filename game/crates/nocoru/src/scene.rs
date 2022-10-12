@@ -6,24 +6,38 @@ use hell_renderer::render_data::SceneData;
 use hell_renderer::vulkan::RenderData;
 use hell_resources::ResourceManager;
 
-use crate::systems::{MovementSystem, MovementData};
+use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem};
 
 
 
 pub struct NocoruScene {
-    material_paths: Vec<&'static str>,
-
     pub scene_data: SceneData,
     pub render_data: RenderData,
     pub movement_data: Vec<MovementData>,
+    pub is_alive: Vec<bool>,
 
     gravity_system: GravitySystem,
     movement_system: MovementSystem,
     collision_system: CollisionSystem,
+    enemy_spawn_system: EnemySpawnSystem,
+    enemy_kill_system: EnemyKillSystem,
+
+    scrolled_distance: f32,
 }
 
 impl NocoruScene {
     pub const PLAYER_IDX: usize = 0;
+    pub const ENEMY_POOL_SIZE: usize = 10;
+    pub const ENTITY_COUNT: usize = Self::ENEMY_POOL_SIZE + 1;
+
+    pub const PLAYER_MAT: &'static str = "assets/chars_v1/player_mat.yaml";
+    pub const ENEMY_T1_MAT: &'static str = "assets/chars_v1/enemy_t1_mat.yaml";
+    pub const ENEMY_T2_MAT: &'static str = "assets/chars_v1/enemy_t2_mat.yaml";
+
+    pub const ENEMY_SPAWN_POS: glam::Vec3 = glam::Vec3::new(5.0, 0.0, 0.0);
+    pub const ENEMY_RESET_POS: glam::Vec3 = glam::Vec3::new(5.0, -3.0, 0.0);
+    pub const ENEMY_KILL_POS_X: f32 = -5.0;
+    pub const WORLD_SCROLL_SPEED: f32 = 2.0;
 }
 
 impl NocoruScene {
@@ -31,41 +45,48 @@ impl NocoruScene {
 
         let scene_data = SceneData::default();
         let render_data = RenderData::default();
-
-        let material_paths = vec![
-            "assets/player_mat.yaml",
-            "assets/enemy_1_mat.yaml",
-            "assets/enemy_2_mat.yaml",
-        ];
+        let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
+        let is_alive = vec![false; Self::ENTITY_COUNT];
 
         let gravity_system = GravitySystem::default();
         let movement_system = MovementSystem::default();
         let collision_system = CollisionSystem::default();
 
-        let entity_count = 3;
-        let movement_data = vec![MovementData::default(); entity_count];
+        let enemy_spawn_system = EnemySpawnSystem::new(Self::ENEMY_SPAWN_POS, glam::vec2(-Self::WORLD_SCROLL_SPEED, 0.0));
+        let enemy_kill_system = EnemyKillSystem::new(Self::ENEMY_RESET_POS, Self::ENEMY_KILL_POS_X);
 
 
         Self {
-            material_paths,
-
             scene_data,
             render_data,
             movement_data,
+            is_alive,
 
             gravity_system,
             movement_system,
             collision_system,
+            enemy_spawn_system,
+            enemy_kill_system,
+
+            scrolled_distance: 0.0,
         }
     }
 
     pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
-        // load materials
-        // --------------
-        for mat in &self.material_paths {
-            let mat_idx = resource_manager.load_material(mat)?;
-            self.render_data.add_data(0, mat_idx, Transform::default());
+        // setup player
+        // ------------
+        let player_mat = resource_manager.load_material(Self::PLAYER_MAT)?;
+        self.render_data.add_data(0, player_mat, Transform::default());
+
+        // setup enemies
+        // -------------
+        let enemy_t1_mat_idx = resource_manager.load_material(Self::ENEMY_T1_MAT)?;
+        let _enemy_t2_mat_idx = resource_manager.load_material(Self::ENEMY_T2_MAT)?;
+        for _ in 0..Self::ENEMY_POOL_SIZE {
+            self.render_data.add_data(0, enemy_t1_mat_idx, Transform::default());
         }
+
+        self.enemy_spawn_system.prepare(&mut self.render_data.transforms[1..Self::ENEMY_POOL_SIZE+1], &mut self.movement_data);
 
         Ok(())
     }
@@ -82,13 +103,27 @@ impl NocoruScene {
             player_trans.translate_y(player_offset);
         }
 
-        self.movement_data[1].velocity = glam::vec2(-1.0, 0.0);
-        self.movement_data[2].velocity = glam::vec2(-3.0, 0.0);
+        self.enemy_kill_system.execute(
+            &mut render_data.transforms[1..Self::ENEMY_POOL_SIZE+1],
+            &mut self.movement_data[1..Self::ENEMY_POOL_SIZE+1],
+            &mut self.is_alive[1..Self::ENEMY_POOL_SIZE+1]
+        );
+
+        if self.scrolled_distance > 3.0 {
+            self.scrolled_distance = 0.0;
+            let _spawned_enemy_idx = self.enemy_spawn_system.execute(
+                &mut render_data.transforms[1..Self::ENEMY_POOL_SIZE+1],
+                &mut self.movement_data[1..Self::ENEMY_POOL_SIZE+1],
+                &mut self.is_alive[1..Self::ENEMY_POOL_SIZE+1]
+            );
+        }
 
         let player_trans = &mut render_data.transforms[0..1];
         self.gravity_system.execute(player_trans, delta_time);
         self.movement_system.execute(delta_time, &mut render_data.transforms, &self.movement_data)?;
         self.collision_system.execute(&mut render_data.transforms);
+
+        self.scrolled_distance += Self::WORLD_SCROLL_SPEED * delta_time;
 
         Ok(())
     }
