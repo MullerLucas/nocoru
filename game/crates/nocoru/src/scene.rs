@@ -1,12 +1,13 @@
 use hell_common::transform::Transform;
 use hell_error::HellResult;
 use hell_input::{KeyCode, InputManager};
-use hell_physics::systems::{GravitySystem, CollisionSystem};
+use hell_physics::collision::AABB2D;
+use hell_physics::systems::GravitySystem;
 use hell_renderer::render_data::SceneData;
 use hell_renderer::vulkan::RenderData;
 use hell_resources::ResourceManager;
 
-use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem};
+use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem};
 
 
 
@@ -14,11 +15,13 @@ pub struct NocoruScene {
     pub scene_data: SceneData,
     pub render_data: RenderData,
     pub movement_data: Vec<MovementData>,
+    pub colliders: Vec<AABB2D>,
     pub is_alive: Vec<bool>,
 
     gravity_system: GravitySystem,
     movement_system: MovementSystem,
-    collision_system: CollisionSystem,
+    environment_collision_system: EnvironmentCollisionSystem,
+    enemy_collision_system: EneymCollisionSystem,
     enemy_spawn_system: EnemySpawnSystem,
     enemy_kill_system: EnemyKillSystem,
 
@@ -41,16 +44,18 @@ impl NocoruScene {
 }
 
 impl NocoruScene {
-    pub fn new_scene_1() -> Self {
+    pub fn new() -> Self {
 
         let scene_data = SceneData::default();
         let render_data = RenderData::default();
         let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
+        let colliders = vec![AABB2D::default(); Self::ENTITY_COUNT];
         let is_alive = vec![false; Self::ENTITY_COUNT];
 
         let gravity_system = GravitySystem::default();
         let movement_system = MovementSystem::default();
-        let collision_system = CollisionSystem::default();
+        let environment_collision_system = EnvironmentCollisionSystem::default();
+        let enemy_collision_system = EneymCollisionSystem::default();
 
         let enemy_spawn_system = EnemySpawnSystem::new(Self::ENEMY_SPAWN_POS, glam::vec2(-Self::WORLD_SCROLL_SPEED, 0.0));
         let enemy_kill_system = EnemyKillSystem::new(Self::ENEMY_RESET_POS, Self::ENEMY_KILL_POS_X);
@@ -60,17 +65,24 @@ impl NocoruScene {
             scene_data,
             render_data,
             movement_data,
+            colliders,
             is_alive,
 
             gravity_system,
             movement_system,
-            collision_system,
+            environment_collision_system,
+            enemy_collision_system,
             enemy_spawn_system,
             enemy_kill_system,
 
             scrolled_distance: 0.0,
         }
     }
+
+    pub fn reset_scene(&mut self) {
+        println!("reset scene");
+    }
+
 
     pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
         // setup player
@@ -91,7 +103,7 @@ impl NocoruScene {
         Ok(())
     }
 
-    pub fn update_scene_1(&mut self, delta_time: f32, input: &InputManager) -> HellResult<()> {
+    pub fn update_scene(&mut self, delta_time: f32, input: &InputManager) -> HellResult<()> {
         let render_data = &mut self.render_data;
 
         // handle user input
@@ -109,7 +121,7 @@ impl NocoruScene {
             &mut self.is_alive[1..Self::ENEMY_POOL_SIZE+1]
         );
 
-        if self.scrolled_distance > 3.0 {
+        if self.scrolled_distance > 8.0 {
             self.scrolled_distance = 0.0;
             let _spawned_enemy_idx = self.enemy_spawn_system.execute(
                 &mut render_data.transforms[1..Self::ENEMY_POOL_SIZE+1],
@@ -121,7 +133,18 @@ impl NocoruScene {
         let player_trans = &mut render_data.transforms[0..1];
         self.gravity_system.execute(player_trans, delta_time);
         self.movement_system.execute(delta_time, &mut render_data.transforms, &self.movement_data)?;
-        self.collision_system.execute(&mut render_data.transforms);
+        self.environment_collision_system.execute(&mut render_data.transforms);
+
+        let did_collide = self.enemy_collision_system.execute(
+            &self.colliders[0],
+            &self.colliders[1..],
+            &render_data.transforms[0],
+            &render_data.transforms[1..]
+        );
+
+        if did_collide {
+            self.reset_scene();
+        }
 
         self.scrolled_distance += Self::WORLD_SCROLL_SPEED * delta_time;
 

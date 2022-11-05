@@ -37,7 +37,7 @@ struct NocoruGame {
 
 impl NocoruGame {
     pub fn new() -> Self {
-        let scene_1 = NocoruScene::new_scene_1();
+        let scene_1 = NocoruScene::new();
 
         Self {
             scene_1,
@@ -58,7 +58,7 @@ impl HellGame for NocoruGame {
     }
 
     fn update_game(&mut self, delta_time: f32, input: &InputManager) -> HellResult<()> {
-        self.scene_1.update_scene_1(delta_time, input)
+        self.scene_1.update_scene(delta_time, input)
     }
 }
 
