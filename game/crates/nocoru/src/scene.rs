@@ -34,17 +34,17 @@ impl NocoruScene {
     pub const ENEMY_POOL_SIZE: usize = 10;
     pub const ENTITY_COUNT: usize = Self::ENEMY_POOL_SIZE + 1;
 
-    pub const PLAYER_MAT: &'static str = "assets/chars_v1/player_mat.yaml";
-    pub const ENEMY_T1_MAT: &'static str = "assets/chars_v1/enemy_t1_mat.yaml";
-    pub const ENEMY_T2_MAT: &'static str = "assets/chars_v1/enemy_t2_mat.yaml";
+    pub const PLAYER_MAT: &'static str = "assets/characters/player_mat.yaml";
+    pub const ENEMY_T1_MAT: &'static str = "assets/characters/enemy_t1_mat.yaml";
+    pub const ENEMY_T2_MAT: &'static str = "assets/characters/enemy_t2_mat.yaml";
 
     pub const ENEMY_SPAWN_POS: glam::Vec3 = glam::Vec3::new(5.0, 0.0, 0.0);
     pub const ENEMY_RESET_POS: glam::Vec3 = glam::Vec3::new(5.0, -3.0, 0.0);
     pub const ENEMY_KILL_POS_X: f32 = -5.0;
     pub const WORLD_SCROLL_SPEED: f32 = 2.0;
 
-    pub const JUMP_FORCE: f32 = -1000.0;
-    pub const FALL_FORCE: f32 = 20.0;
+    pub const JUMP_FORCE: f32 = 1000.0;
+    pub const FALL_FORCE: f32 = -20.0;
 }
 
 impl NocoruScene {

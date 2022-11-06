@@ -24,29 +24,32 @@ impl EnvironmentCollisionSystem {
             .zip(is_grounded)
             .for_each(|((t, md), ig)| {
                 // touch ground
-                if t.translation.y > self.floor_y {
+                if t.translation.y < self.floor_y {
                     *ig = true;
                     t.translation.y = self.floor_y;
-                    md.velocity.y = md.velocity.y.min(0.0);
+                    md.velocity.y = md.velocity.y.max(0.0);
                 }
 
                 // touch ceiling
-                if t.translation.y < self.ceiling_y {
+                if t.translation.y > self.ceiling_y {
                     t.translation.y = self.ceiling_y;
-                    md.velocity.y = md.velocity.y.max(0.0);
+                    md.velocity.y = md.velocity.y.min(0.0);
                 }
             });
     }
 }
 
-
 impl Default for EnvironmentCollisionSystem {
     fn default() -> Self {
-        Self::new(0.0, f32::MIN)
+        Self::new(0.0, 100.0)
     }
 }
 
+
+
 // ----------------------------------------------
+
+
 
 #[derive(Default)]
 pub struct EneymCollisionSystem;
@@ -66,10 +69,3 @@ impl EneymCollisionSystem {
         false
     }
 }
-
-
-
-// ----------------------------------------------
-
-
-

@@ -1,0 +1,5 @@
+material:
+  textures:
+    main_tex:
+      path: "assets/prototype/prototype_16x16_transparent.png"
+
