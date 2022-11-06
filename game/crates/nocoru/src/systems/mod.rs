@@ -1,5 +1,5 @@
 mod movement;
-pub use movement::{MovementSystem, MovementData};
+pub use movement::*;
 
 mod enemy_spawn_system;
 pub use enemy_spawn_system::EnemySpawnSystem;

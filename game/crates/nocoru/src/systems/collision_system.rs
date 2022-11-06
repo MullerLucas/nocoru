@@ -1,6 +1,8 @@
 use hell_common::transform::Transform;
 use hell_physics::collision::AABB2D;
 
+use super::MovementData;
+
 
 
 pub struct EnvironmentCollisionSystem {
@@ -16,10 +18,24 @@ impl EnvironmentCollisionSystem {
         }
     }
 
-    pub fn execute(&self, transforms: &mut [Transform]) {
-        for t in transforms  {
-            t.clamp_y(self.ceiling_y, self.floor_y);
-        }
+    pub fn execute(&self, transforms: &mut [Transform], movement_data: &mut [MovementData], is_grounded: &mut [bool]) {
+        transforms.iter_mut()
+            .zip(movement_data)
+            .zip(is_grounded)
+            .for_each(|((t, md), ig)| {
+                // touch ground
+                if t.translation.y > self.floor_y {
+                    *ig = true;
+                    t.translation.y = self.floor_y;
+                    md.velocity.y = md.velocity.y.min(0.0);
+                }
+
+                // touch ceiling
+                if t.translation.y < self.ceiling_y {
+                    t.translation.y = self.ceiling_y;
+                    md.velocity.y = md.velocity.y.max(0.0);
+                }
+            });
     }
 }
 

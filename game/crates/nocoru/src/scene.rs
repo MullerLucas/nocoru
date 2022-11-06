@@ -2,12 +2,11 @@ use hell_common::transform::Transform;
 use hell_error::HellResult;
 use hell_input::{KeyCode, InputManager};
 use hell_physics::collision::AABB2D;
-use hell_physics::systems::GravitySystem;
 use hell_renderer::render_data::SceneData;
 use hell_renderer::vulkan::RenderData;
 use hell_resources::ResourceManager;
 
-use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem};
+use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem, JumpSystem, GravitySystem};
 
 
 
@@ -17,9 +16,11 @@ pub struct NocoruScene {
     pub movement_data: Vec<MovementData>,
     pub colliders: Vec<AABB2D>,
     pub is_alive: Vec<bool>,
+    is_grounded: Vec<bool>,
 
     gravity_system: GravitySystem,
     movement_system: MovementSystem,
+    jump_system: JumpSystem,
     environment_collision_system: EnvironmentCollisionSystem,
     enemy_collision_system: EneymCollisionSystem,
     enemy_spawn_system: EnemySpawnSystem,
@@ -41,6 +42,9 @@ impl NocoruScene {
     pub const ENEMY_RESET_POS: glam::Vec3 = glam::Vec3::new(5.0, -3.0, 0.0);
     pub const ENEMY_KILL_POS_X: f32 = -5.0;
     pub const WORLD_SCROLL_SPEED: f32 = 2.0;
+
+    pub const JUMP_FORCE: f32 = -1000.0;
+    pub const FALL_FORCE: f32 = 20.0;
 }
 
 impl NocoruScene {
@@ -51,9 +55,11 @@ impl NocoruScene {
         let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
         let colliders = vec![AABB2D::default(); Self::ENTITY_COUNT];
         let is_alive = vec![false; Self::ENTITY_COUNT];
+        let is_grounded = vec![false; Self::ENTITY_COUNT];
 
         let gravity_system = GravitySystem::default();
         let movement_system = MovementSystem::default();
+        let jump_system = JumpSystem::new(Self::JUMP_FORCE, Self::FALL_FORCE);
         let environment_collision_system = EnvironmentCollisionSystem::default();
         let enemy_collision_system = EneymCollisionSystem::default();
 
@@ -67,9 +73,11 @@ impl NocoruScene {
             movement_data,
             colliders,
             is_alive,
+            is_grounded,
 
             gravity_system,
             movement_system,
+            jump_system,
             environment_collision_system,
             enemy_collision_system,
             enemy_spawn_system,
@@ -80,9 +88,8 @@ impl NocoruScene {
     }
 
     pub fn reset_scene(&mut self) {
-        println!("reset scene");
+        // println!("reset scene");
     }
-
 
     pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
         // setup player
@@ -106,14 +113,6 @@ impl NocoruScene {
     pub fn update_scene(&mut self, delta_time: f32, input: &InputManager) -> HellResult<()> {
         let render_data = &mut self.render_data;
 
-        // handle user input
-        // -----------------
-        let player_trans = &mut render_data.transforms[Self::PLAYER_IDX];
-        if input.key_state(KeyCode::Space).is_down() {
-            let mut player_offset = 0_f32;
-            player_offset -= 20_f32 * delta_time;
-            player_trans.translate_y(player_offset);
-        }
 
         self.enemy_kill_system.execute(
             &mut render_data.transforms[1..Self::ENEMY_POOL_SIZE+1],
@@ -130,10 +129,19 @@ impl NocoruScene {
             );
         }
 
-        let player_trans = &mut render_data.transforms[0..1];
-        self.gravity_system.execute(player_trans, delta_time);
+
+        self.environment_collision_system.execute(&mut render_data.transforms, &mut self.movement_data, &mut self.is_grounded);
+        self.gravity_system.execute(&mut self.movement_data[Self::PLAYER_IDX..=Self::PLAYER_IDX], delta_time);
+
+        let wants_to_jump = input.key_state(KeyCode::Space).is_down();
+        self.jump_system.execute(
+            delta_time,
+            &mut self.movement_data[Self::PLAYER_IDX..=Self::PLAYER_IDX],
+            &mut self.is_grounded[Self::PLAYER_IDX..=Self::PLAYER_IDX],
+            &[wants_to_jump]
+        );
+
         self.movement_system.execute(delta_time, &mut render_data.transforms, &self.movement_data)?;
-        self.environment_collision_system.execute(&mut render_data.transforms);
 
         let did_collide = self.enemy_collision_system.execute(
             &self.colliders[0],
