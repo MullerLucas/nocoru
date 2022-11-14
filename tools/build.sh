@@ -7,8 +7,8 @@ sh_dir=$(dirname $0)
 
 # compile shaders
 # ---------------
-shader_file="game/shaders/sprite"
-shader_sh="$sh_dir/../hellengine/tools/compile_shaders.sh"
+shader_file="$sh_dir/../game/shaders/sprite"
+shader_sh="$sh_dir/../hellengine/engine/tools/compile_shaders.sh"
 eval "$shader_sh" "$shader_file"
 
 

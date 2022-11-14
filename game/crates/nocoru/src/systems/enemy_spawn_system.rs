@@ -1,3 +1,4 @@
+use glam::{Vec3, Vec2};
 use hell_common::transform::Transform;
 use super::MovementData;
 
@@ -5,21 +6,19 @@ use super::MovementData;
 
 
 pub struct EnemySpawnSystem {
-    spawn_pos: glam::Vec3,
-    initial_velocity: glam::Vec2,
+    initial_velocity: Vec2,
 }
 
 impl EnemySpawnSystem {
-    pub fn new(spawn_pos: glam::Vec3, initial_velocity: glam::Vec2) -> Self {
+    pub fn new(initial_velocity: Vec2) -> Self {
         Self {
-            spawn_pos,
             initial_velocity,
         }
     }
 
-    pub fn prepare(&self, transforms: &mut [Transform], movement: &mut [MovementData]) {
+    pub fn prepare(&self, spawn_pos: &Vec3, transforms: &mut [Transform], movement: &mut [MovementData]) {
         for t in transforms {
-            t.translation = self.spawn_pos;
+            t.translation = *spawn_pos;
         }
 
         for m in movement {
@@ -29,13 +28,14 @@ impl EnemySpawnSystem {
 
     pub fn execute(
         &self,
+        spawn_pos: Vec3,
         transforms: &mut [Transform],
         movement: &mut [MovementData],
         is_alive: &mut [bool],
     ) -> Option<usize> {
         let spawn_idx = is_alive.iter().position(|alive| !*alive)?;
 
-        transforms[spawn_idx].translation = self.spawn_pos;
+        transforms[spawn_idx].translation = spawn_pos;
         movement[spawn_idx].velocity = self.initial_velocity;
         is_alive[spawn_idx] = true;
 

@@ -1,0 +1,5 @@
+material:
+  textures:
+    main_tex:
+      path: "assets/environment/ground_v1.png"
+

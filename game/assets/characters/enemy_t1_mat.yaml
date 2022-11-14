@@ -1,4 +1,5 @@
 material:
   textures:
     main_tex:
-      path: "assets/prototype/prototype_16x16_red.png"
+      # path: "assets/prototype/prototype_16x16_red.png"
+      path: "assets/characters/enemy_t1_char.png"
