@@ -6,6 +6,7 @@ use hell_physics::collision::AABB2D;
 use hell_renderer::render_data::SceneData;
 use hell_renderer::vulkan::RenderData;
 use hell_resources::ResourceManager;
+use hell_resources::fonts::FntFile;
 
 use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem, JumpSystem, GravitySystem};
 
@@ -38,7 +39,7 @@ impl NocoruScene {
     pub const FLOOR_Y: f32 = -1.0;
     pub const CEILING_Y: f32 = 10.0;
 
-    pub const GROUND_SIZE: f32 = 1.95;
+    pub const GROUND_SIZE: f32 = 1.0;
 
     pub const GROUND_POOL_SIZE: usize = 10;
     pub const ENEMY_POOL_SIZE:  usize = 10;
@@ -52,6 +53,8 @@ impl NocoruScene {
     pub const PLAYER_IDX:   usize = Self::ENEMY_END_IDX + 1;
     pub const ENTITY_COUNT: usize = Self::GROUND_POOL_SIZE + Self::ENEMY_POOL_SIZE + 1;
 
+    pub const FONT_START_IDX: usize = Self::PLAYER_IDX + 1;
+
 
 
 
@@ -61,6 +64,8 @@ impl NocoruScene {
     pub const ENEMY_T1_MAT:  &'static str = "assets/characters/enemy_t1_mat.yaml";
     pub const PLAYER_MAT:    &'static str = "assets/characters/player_mat.yaml";
     pub const FONT_MAT:      &'static str = "assets/fonts/font_bm_fira_code_mat.yaml";
+
+    pub const FONT_FILE_PATH: &str = "assets/fonts/font_bm_fira_code.fnt";
 
     pub const GROUND_SPAWN_Y:     f32 = Self::FLOOR_Y - Self::GROUND_SIZE;
     pub const GROUND_SPAWN_POS:   glam::Vec3 = glam::Vec3::new(5.0, Self::GROUND_SPAWN_Y, 0.0);
@@ -99,6 +104,9 @@ impl NocoruScene {
         let enemy_kill_system = EnemyKillSystem::new(Self::ENEMY_KILL_POS_X);
 
         let score_txt = TextMesh::new(None);
+
+        let font_path = std::path::Path::new(Self::FONT_FILE_PATH);
+        let _font_file = FntFile::from_file(font_path).unwrap();
 
         Self {
             scene_data,
@@ -156,8 +164,6 @@ impl NocoruScene {
         let player_mat = resource_manager.load_material(Self::PLAYER_MAT)?;
         self.render_data.add_data(Self::QUAD_MESH, player_mat, Transform::default());
 
-        self.enemy_spawn_system.prepare(&Self::GROUND_SPAWN_POS, &mut self.render_data.transforms[Self::GROUND_START_IDX..=Self::GROUND_END_IDX], &mut self.movement_data);
-        self.enemy_spawn_system.prepare(&Self::ENEMY_SPAWN_POS, &mut self.render_data.transforms[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX], &mut self.movement_data);
 
         // setup gui
         // ---------
@@ -165,6 +171,15 @@ impl NocoruScene {
         let font = HellFont::new(Self::QUAD_MESH, font_mat);
         self.score_txt.set_font(Some(font));
         self.score_txt.set_text("Hell");
+
+        for t in self.score_txt.char_transforms() {
+            self.render_data.add_data(Self::QUAD_MESH, font_mat, t.clone());
+        }
+
+        // setup systems
+        // -------------
+        self.enemy_spawn_system.prepare(&Self::GROUND_SPAWN_POS, &mut self.render_data.transforms[Self::GROUND_START_IDX..=Self::GROUND_END_IDX], &mut self.movement_data);
+        self.enemy_spawn_system.prepare(&Self::ENEMY_SPAWN_POS, &mut self.render_data.transforms[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX], &mut self.movement_data);
 
         Ok(())
     }
@@ -231,7 +246,7 @@ impl NocoruScene {
             &[wants_to_jump]
         );
 
-        self.movement_system.execute(delta_time, &mut render_data.transforms, &self.movement_data)?;
+        self.movement_system.execute(delta_time, &mut render_data.transforms[Self::GROUND_START_IDX..=Self::PLAYER_IDX], &self.movement_data)?;
         self.ground_distance += Self::WORLD_SCROLL_SPEED * delta_time;
         self.enemy_distance += Self::WORLD_SCROLL_SPEED * delta_time;
 
