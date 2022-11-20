@@ -48,8 +48,8 @@ impl NocoruGame {
 impl HellGame for NocoruGame {
     fn scene_data(&self) -> &SceneData               { &self.scene_1.scene_data }
     fn scene_data_mut(&mut self) -> &mut SceneData   { &mut self.scene_1.scene_data }
-    fn render_data(&self) -> &RenderData             { &self.scene_1.render_data }
-    fn render_data_mut(&mut self) -> &mut RenderData { &mut self.scene_1.render_data }
+    fn render_data(&self) -> &RenderData             { self.scene_1.render_data() }
+    fn render_data_mut(&mut self) -> &mut RenderData { self.scene_1.render_data_mut() }
 
     fn init_game(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
         self.scene_1.load_scene(resource_manager)?;

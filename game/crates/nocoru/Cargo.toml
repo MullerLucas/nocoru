@@ -15,5 +15,6 @@ hell_winit     = { path = "../../../hellengine/engine/crates/hell_winit" }
 hell_renderer  = { path = "../../../hellengine/engine/crates/hell_renderer" }
 hell_resources = { path = "../../../hellengine/engine/crates/hell_resources" }
 hell_physics   = { path = "../../../hellengine/engine/crates/hell_physics" }
+hell_gui       = { path = "../../../hellengine/engine/crates/hell_gui" }
 
 glam.workspace = true

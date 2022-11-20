@@ -558,6 +558,14 @@ name = "hell_error"
 version = "0.1.0"
 
 [[package]]
+name = "hell_gui"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "hell_common",
+]
+
+[[package]]
 name = "hell_input"
 version = "0.1.0"
 dependencies = [
@@ -903,6 +911,7 @@ dependencies = [
  "hell_app",
  "hell_common",
  "hell_error",
+ "hell_gui",
  "hell_input",
  "hell_physics",
  "hell_renderer",

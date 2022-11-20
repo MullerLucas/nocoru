@@ -1,5 +1,6 @@
 use hell_common::transform::Transform;
 use hell_error::HellResult;
+use hell_gui::text::{HellFont, TextMesh};
 use hell_input::{KeyCode, InputManager};
 use hell_physics::collision::AABB2D;
 use hell_renderer::render_data::SceneData;
@@ -12,7 +13,7 @@ use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSy
 
 pub struct NocoruScene {
     pub scene_data: SceneData,
-    pub render_data: RenderData,
+    render_data: RenderData,
     pub movement_data: Vec<MovementData>,
     pub colliders: Vec<AABB2D>,
     pub is_alive: Vec<bool>,
@@ -28,6 +29,8 @@ pub struct NocoruScene {
 
     ground_distance: f32,
     enemy_distance: f32,
+
+    score_txt: TextMesh,
 }
 
 impl NocoruScene {
@@ -44,15 +47,20 @@ impl NocoruScene {
     pub const GROUND_END_IDX:   usize = Self::GROUND_START_IDX + Self::GROUND_POOL_SIZE - 1;
 
     pub const ENEMY_START_IDX: usize = Self::GROUND_END_IDX + 1;
-    pub const ENEMY_END_IDX:   usize =  Self::ENEMY_START_IDX + Self::ENEMY_POOL_SIZE - 1;
+    pub const ENEMY_END_IDX:   usize = Self::ENEMY_START_IDX + Self::ENEMY_POOL_SIZE - 1;
 
     pub const PLAYER_IDX:   usize = Self::ENEMY_END_IDX + 1;
     pub const ENTITY_COUNT: usize = Self::GROUND_POOL_SIZE + Self::ENEMY_POOL_SIZE + 1;
 
+
+
+
+    pub const QUAD_MESH: usize = 0;
+
     pub const GROUND_T1_MAT: &'static str = "assets/environment/ground_t1_mat.yaml";
     pub const ENEMY_T1_MAT:  &'static str = "assets/characters/enemy_t1_mat.yaml";
-    // pub const ENEMY_T2_MAT:  &'static str = "assets/characters/enemy_t2_mat.yaml";
     pub const PLAYER_MAT:    &'static str = "assets/characters/player_mat.yaml";
+    pub const FONT_MAT:      &'static str = "assets/fonts/font_bm_fira_code_mat.yaml";
 
     pub const GROUND_SPAWN_Y:     f32 = Self::FLOOR_Y - Self::GROUND_SIZE;
     pub const GROUND_SPAWN_POS:   glam::Vec3 = glam::Vec3::new(5.0, Self::GROUND_SPAWN_Y, 0.0);
@@ -90,6 +98,7 @@ impl NocoruScene {
         let enemy_spawn_system = EnemySpawnSystem::new(glam::vec2(-Self::WORLD_SCROLL_SPEED, 0.0));
         let enemy_kill_system = EnemyKillSystem::new(Self::ENEMY_KILL_POS_X);
 
+        let score_txt = TextMesh::new(None);
 
         Self {
             scene_data,
@@ -109,7 +118,17 @@ impl NocoruScene {
 
             ground_distance: 0.0,
             enemy_distance: 0.0,
+
+            score_txt,
         }
+    }
+
+    pub fn render_data(&self) -> &RenderData {
+        &self.render_data
+    }
+
+    pub fn render_data_mut(&mut self) -> &mut RenderData {
+        &mut self.render_data
     }
 
     pub fn reset_scene(&mut self) {
@@ -119,26 +138,33 @@ impl NocoruScene {
     pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
         // setup environment
         // -----------------
-        let ground_t1_mat_idx = resource_manager.load_material(Self::GROUND_T1_MAT)?;
+        let ground_t1_mat = resource_manager.load_material(Self::GROUND_T1_MAT)?;
         for _ in Self::GROUND_START_IDX..=Self::GROUND_END_IDX {
-            self.render_data.add_data(0, ground_t1_mat_idx, Transform::default());
+            self.render_data.add_data(Self::QUAD_MESH, ground_t1_mat, Transform::default());
         }
 
         // setup enemies
         // -------------
-        let enemy_t1_mat_idx = resource_manager.load_material(Self::ENEMY_T1_MAT)?;
+        let enemy_t1_mat = resource_manager.load_material(Self::ENEMY_T1_MAT)?;
         // let _enemy_t2_mat_idx = resource_manager.load_material(Self::ENEMY_T2_MAT)?;
         for _ in Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX {
-            self.render_data.add_data(0, enemy_t1_mat_idx, Transform::default());
+            self.render_data.add_data(Self::QUAD_MESH, enemy_t1_mat, Transform::default());
         }
 
         // setup player
         // ------------
-        let player_mat_idx = resource_manager.load_material(Self::PLAYER_MAT)?;
-        self.render_data.add_data(0, player_mat_idx, Transform::default());
+        let player_mat = resource_manager.load_material(Self::PLAYER_MAT)?;
+        self.render_data.add_data(Self::QUAD_MESH, player_mat, Transform::default());
 
         self.enemy_spawn_system.prepare(&Self::GROUND_SPAWN_POS, &mut self.render_data.transforms[Self::GROUND_START_IDX..=Self::GROUND_END_IDX], &mut self.movement_data);
         self.enemy_spawn_system.prepare(&Self::ENEMY_SPAWN_POS, &mut self.render_data.transforms[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX], &mut self.movement_data);
+
+        // setup gui
+        // ---------
+        let font_mat = resource_manager.load_material(Self::FONT_MAT)?;
+        let font = HellFont::new(Self::QUAD_MESH, font_mat);
+        self.score_txt.set_font(Some(font));
+        self.score_txt.set_text("Hell");
 
         Ok(())
     }
