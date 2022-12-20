@@ -168,7 +168,7 @@ impl NocoruScene {
         // setup gui
         // ---------
         let font_mat = resource_manager.load_material(Self::FONT_MAT)?;
-        let font = HellFont::new(Self::QUAD_MESH, font_mat);
+        let font = HellFont::new(Self::QUAD_MESH, font_mat.id);
         self.score_txt.set_font(Some(font));
         self.score_txt.set_text("Hell");
 

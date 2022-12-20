@@ -1,4 +1,6 @@
 material:
+  name: "font_bm"
+  shader: "shaders/sprite"
   textures:
     main_tex:
       path: "assets/fonts/font_bm_fira_code.png"

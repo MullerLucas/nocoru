@@ -1,4 +1,6 @@
 material:
+  name: "ground_t1"
+  shader: "shaders/sprite"
   textures:
     main_tex:
       path: "assets/environment/ground_v1.png"

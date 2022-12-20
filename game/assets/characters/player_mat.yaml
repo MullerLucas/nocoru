@@ -1,4 +1,6 @@
 material:
+  name: "player"
+  shader: "shaders/sprite"
   textures:
     main_tex:
       # path: "assets/prototype/prototype_16x16_transparent.png"

@@ -53,7 +53,6 @@ impl HellGame for NocoruGame {
 
     fn init_game(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
         self.scene_1.load_scene(resource_manager)?;
-
         Ok(())
     }
 

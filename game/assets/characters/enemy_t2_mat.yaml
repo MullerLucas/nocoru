@@ -1,4 +1,6 @@
 material:
+  name: "enemy_t2"
+  shader: "shaders/sprite"
   textures:
     main_tex:
       path: "assets/prototype/prototype_16x16_pink.png"
