@@ -1,30 +1,71 @@
 #!/bin/env bash
 
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -c|--check)
+      SHOULD_CHECK=YES
+      shift # past value
+      ;;
+    -r|--run)
+      SHOULD_RUN=YES
+      shift # past argument
+      ;;
+    # --default)
+    #   SEARCHPATH="$2"
+    #   shift # past argument
+    #   shift # past value
+    #   ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
+
+echo "SHOULD_CHECK: '$SHOULD_CHECK'"
+echo "  SHOULD_RUN: '$SHOULD_RUN'"
+
+# -----------------------------------------------
+
+
 orig_dir=$(pwd)
 sh_dir=$(dirname $0)
 
 
-
 # compile shaders
 # ---------------
-sprite_shader_file="$sh_dir/../game/shaders/sprite"
-bmfont_shader_file="$sh_dir/../game/shaders/bmfont"
-shader_sh="$sh_dir/../hellengine/engine/tools/compile_shaders.sh"
-
-eval "$shader_sh" "$sprite_shader_file" || exit 1
-eval "$shader_sh" "$bmfont_shader_file" || exit 1
-
-
+sh_shader="$sh_dir/build_shaders.sh"
+chmod +x "$sh_shader"
+eval "$sh_shader"
 
 # compile game
 # ------------
-
 game_dir="$sh_dir/../game"
 
 cd "$game_dir" || exit 1
 
-# RUSTFLAGS="-D warnings" cargo build
 cargo-clippy
-cargo build
+
+if [ "$SHOULD_CHECK" = "YES"]; then
+    echo "TEST: '$SHOULD_CHECK'"
+    echo "start checking project..."
+    cargo check
+elif [ "$SHOULD_RUN" = "YES" ]; then
+    echo "start running project..."
+    cargo run
+else
+    echo "start building project..."
+    cargo build
+fi
+
+
+
 
 cd "$orig_dir" || exit 1
