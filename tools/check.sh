@@ -21,6 +21,7 @@ eval "$shader_sh" "$bmfont_shader_file" || exit 1
 game_dir="$sh_dir/../game"
 cd "$game_dir" || exit 1
 
-cargo-clippy check
+cargo-clippy
+# cargo check
 
 cd "$orig_dir" || exit 1

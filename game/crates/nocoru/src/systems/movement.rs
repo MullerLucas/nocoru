@@ -48,6 +48,7 @@ pub struct GravitySystem {
 }
 
 impl GravitySystem {
+    #[allow(dead_code)]
     pub fn new(config: PhysicsConfig) -> Self {
         Self {
             config

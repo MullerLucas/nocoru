@@ -23,6 +23,8 @@ game_dir="$sh_dir/../game"
 
 cd "$game_dir" || exit 1
 
+# RUSTFLAGS="-D warnings" cargo build
+cargo-clippy
 cargo build
 
 cd "$orig_dir" || exit 1

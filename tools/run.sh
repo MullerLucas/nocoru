@@ -16,5 +16,6 @@ eval "$build_sh"
 # run game
 # --------
 cd "$game_dir" || exit 1
+cargo-clippy
 cargo run
 cd "$orig_dir" || exit 1

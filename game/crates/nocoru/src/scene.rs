@@ -53,7 +53,7 @@ impl NocoruScene {
     pub const PLAYER_IDX:   usize = Self::ENEMY_END_IDX + 1;
     pub const ENTITY_COUNT: usize = Self::GROUND_POOL_SIZE + Self::ENEMY_POOL_SIZE + 1;
 
-    pub const FONT_START_IDX: usize = Self::PLAYER_IDX + 1;
+    pub const _FONT_START_IDX: usize = Self::PLAYER_IDX + 1;
 
 
 
