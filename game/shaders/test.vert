@@ -33,6 +33,7 @@ void main() {
     // 'gl_BaseInstance' corresponds to 'first_instance' paramterer
     mat4 model = object_buffer.objects[gl_BaseInstance].model;
     // mat4 transform_mat = (camera_data.view_proj * push_constants.model);
+
     mat4 transform_mat = (camera_data.view_proj * model);
     gl_Position = transform_mat * in_pos;
 
