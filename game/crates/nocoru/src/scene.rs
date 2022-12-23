@@ -88,7 +88,7 @@ impl NocoruScene {
     pub fn new() -> Self {
 
         let scene_data = SceneData::default();
-        let render_data = RenderData::default();
+        let world_render_data = RenderData::default();
         let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
         let colliders = vec![AABB2D::default(); Self::ENTITY_COUNT];
         let is_alive = vec![false; Self::ENTITY_COUNT];
@@ -110,7 +110,7 @@ impl NocoruScene {
 
         Self {
             scene_data,
-            render_data,
+            render_data: world_render_data,
             movement_data,
             colliders,
             is_alive,

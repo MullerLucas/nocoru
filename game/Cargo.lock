@@ -542,6 +542,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "hell_collections"
+version = "0.1.0"
+
+[[package]]
 name = "hell_common"
 version = "0.1.0"
 dependencies = [
@@ -590,7 +594,9 @@ name = "hell_renderer"
 version = "0.1.0"
 dependencies = [
  "ash",
+ "bitflags",
  "glam",
+ "hell_collections",
  "hell_common",
  "hell_core",
  "hell_error",
