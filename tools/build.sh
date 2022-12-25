@@ -51,7 +51,7 @@ game_dir="$sh_dir/../game"
 
 cd "$game_dir" || exit 1
 
-cargo-clippy
+# cargo-clippy
 
 if [ "$SHOULD_CHECK" = "YES"]; then
     echo "TEST: '$SHOULD_CHECK'"

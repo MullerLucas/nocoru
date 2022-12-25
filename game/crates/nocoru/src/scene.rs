@@ -80,7 +80,7 @@ impl NocoruScene {
     pub const GROUND_SPAWN_INTERVAL: f32 = Self::GROUND_SIZE;
     pub const ENEMY_SPAWN_INTERVAL: f32 = 8.0;
 
-    pub const JUMP_FORCE: f32 = 1300.0;
+    pub const JUMP_FORCE: f32 = 10.0;
     pub const FALL_FORCE: f32 = -20.0;
 }
 
@@ -228,7 +228,6 @@ impl NocoruScene {
                 &mut self.is_alive[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX]
             );
         }
-
 
         self.environment_collision_system.execute(
             &mut render_data.transforms[Self::PLAYER_IDX..=Self::PLAYER_IDX],

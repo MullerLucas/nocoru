@@ -82,7 +82,7 @@ impl JumpSystem {
     }
 
     pub fn execute(&self, delta_time: f32, movement_data: &mut [MovementData], is_grounded: &mut [bool], wants_to_jump: &[bool]) {
-        let offset = self.jump_force * delta_time;
+        let offset = self.jump_force;
         let fall_multi = self.fall_force * delta_time;
 
         for (idx, md) in movement_data.iter_mut().enumerate() {
