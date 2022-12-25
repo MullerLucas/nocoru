@@ -556,6 +556,9 @@ dependencies = [
 [[package]]
 name = "hell_core"
 version = "0.1.0"
+dependencies = [
+ "ash",
+]
 
 [[package]]
 name = "hell_error"
