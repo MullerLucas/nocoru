@@ -11,6 +11,7 @@ input=(
     "$sh_dir/../game/shaders/sprite"
     "$sh_dir/../game/shaders/test"
     "$sh_dir/../game/shaders/bmfont"
+    "$sh_dir/../game/shaders/builtin.ui"
 )
 
 echo "start compiling shaders..."

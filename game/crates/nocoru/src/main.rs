@@ -10,8 +10,7 @@ mod systems;
 use hell_app::HellGame;
 use hell_error::HellResult;
 use hell_input::InputManager;
-use hell_renderer::render_data::SceneData;
-use hell_renderer::vulkan::RenderData;
+use hell_renderer::{vulkan::RenderData, shader::sprite_shader::SpriteShaderSceneData};
 use hell_resources::ResourceManager;
 use hell_winit::Window;
 
@@ -52,8 +51,8 @@ impl NocoruGame {
 }
 
 impl HellGame for NocoruGame {
-    fn scene_data(&self) -> &SceneData               { &self.scene_1.scene_data }
-    fn scene_data_mut(&mut self) -> &mut SceneData   { &mut self.scene_1.scene_data }
+    fn scene_data(&self) -> &SpriteShaderSceneData               { &self.scene_1.scene_data }
+    fn scene_data_mut(&mut self) -> &mut SpriteShaderSceneData   { &mut self.scene_1.scene_data }
     fn render_data(&self) -> &RenderData             { self.scene_1.render_data() }
     fn render_data_mut(&mut self) -> &mut RenderData { self.scene_1.render_data_mut() }
 

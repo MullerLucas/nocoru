@@ -53,7 +53,7 @@ cd "$game_dir" || exit 1
 
 # cargo-clippy
 
-if [ "$SHOULD_CHECK" = "YES"]; then
+if [ "$SHOULD_CHECK" = "YES" ]; then
     echo "TEST: '$SHOULD_CHECK'"
     echo "start checking project..."
     cargo check
