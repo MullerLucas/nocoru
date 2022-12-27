@@ -3,7 +3,7 @@ use hell_error::HellResult;
 use hell_gui::text::{HellFont, TextMesh};
 use hell_input::{KeyCode, InputManager};
 use hell_physics::collision::AABB2D;
-use hell_renderer::{vulkan::RenderData, shader::sprite_shader::SpriteShaderSceneData};
+use hell_renderer::{shader::SpriteShaderSceneData, render_types::RenderPackage};
 use hell_resources::ResourceManager;
 use hell_resources::fonts::FntFile;
 
@@ -13,7 +13,7 @@ use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSy
 
 pub struct NocoruScene {
     pub scene_data: SpriteShaderSceneData,
-    render_data: RenderData,
+    render_pkg: RenderPackage,
     pub movement_data: Vec<MovementData>,
     pub colliders: Vec<AABB2D>,
     pub is_alive: Vec<bool>,
@@ -84,10 +84,11 @@ impl NocoruScene {
 }
 
 impl NocoruScene {
+    // TODO: error handling
     pub fn new() -> Self {
 
         let scene_data = SpriteShaderSceneData::default();
-        let world_render_data = RenderData::default();
+        let render_pkg = RenderPackage::default();
         let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
         let colliders = vec![AABB2D::default(); Self::ENTITY_COUNT];
         let is_alive = vec![false; Self::ENTITY_COUNT];
@@ -109,7 +110,7 @@ impl NocoruScene {
 
         Self {
             scene_data,
-            render_data: world_render_data,
+            render_pkg,
             movement_data,
             colliders,
             is_alive,
@@ -130,12 +131,8 @@ impl NocoruScene {
         }
     }
 
-    pub fn render_data(&self) -> &RenderData {
-        &self.render_data
-    }
-
-    pub fn render_data_mut(&mut self) -> &mut RenderData {
-        &mut self.render_data
+    pub fn render_pkg(&self) -> &RenderPackage {
+        &self.render_pkg
     }
 
     pub fn reset_scene(&mut self) {
@@ -147,7 +144,7 @@ impl NocoruScene {
         // -----------------
         let ground_t1_mat = resource_manager.load_material(Self::GROUND_T1_MAT)?;
         for _ in Self::GROUND_START_IDX..=Self::GROUND_END_IDX {
-            self.render_data.add_data(Self::QUAD_MESH, ground_t1_mat, Transform::default());
+            self.render_pkg.world.add_data(Self::QUAD_MESH, ground_t1_mat, Transform::default());
         }
 
         // setup enemies
@@ -155,13 +152,14 @@ impl NocoruScene {
         let enemy_t1_mat = resource_manager.load_material(Self::ENEMY_T1_MAT)?;
         // let _enemy_t2_mat_idx = resource_manager.load_material(Self::ENEMY_T2_MAT)?;
         for _ in Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX {
-            self.render_data.add_data(Self::QUAD_MESH, enemy_t1_mat, Transform::default());
+            self.render_pkg.world.add_data(Self::QUAD_MESH, enemy_t1_mat, Transform::default());
         }
 
         // setup player
         // ------------
         let player_mat = resource_manager.load_material(Self::PLAYER_MAT)?;
-        self.render_data.add_data(Self::QUAD_MESH, player_mat, Transform::default());
+        self.render_pkg.world.add_data(Self::QUAD_MESH, player_mat, Transform::default());
+
 
 
         // setup gui
@@ -172,19 +170,19 @@ impl NocoruScene {
         self.score_txt.set_text("Hell");
 
         for t in self.score_txt.char_transforms() {
-            self.render_data.add_data(Self::QUAD_MESH, font_mat, t.clone());
+            self.render_pkg.ui.add_data(Self::QUAD_MESH, font_mat, t.clone());
         }
 
         // setup systems
         // -------------
-        self.enemy_spawn_system.prepare(&Self::GROUND_SPAWN_POS, &mut self.render_data.transforms[Self::GROUND_START_IDX..=Self::GROUND_END_IDX], &mut self.movement_data);
-        self.enemy_spawn_system.prepare(&Self::ENEMY_SPAWN_POS, &mut self.render_data.transforms[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX], &mut self.movement_data);
+        self.enemy_spawn_system.prepare(&Self::GROUND_SPAWN_POS, &mut self.render_pkg.world.transforms[Self::GROUND_START_IDX..=Self::GROUND_END_IDX], &mut self.movement_data);
+        self.enemy_spawn_system.prepare(&Self::ENEMY_SPAWN_POS, &mut self.render_pkg.world.transforms[Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX], &mut self.movement_data);
 
         Ok(())
     }
 
     pub fn update_scene(&mut self, delta_time: f32, input: &InputManager) -> HellResult<()> {
-        let render_data = &mut self.render_data;
+        let render_data = &mut self.render_pkg.world;
 
         // kill
         // ----

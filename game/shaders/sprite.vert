@@ -13,6 +13,9 @@ layout(push_constant) uniform constants {
 
 struct ObjectData {
     mat4 model;
+    mat4 reserved_0;
+    mat4 reserved_1;
+    mat4 reserved_2;
 };
 
 // std140 enforces cpp memory layout
