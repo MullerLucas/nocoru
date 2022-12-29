@@ -9,7 +9,7 @@ shader_sh="$sh_dir/../hellengine/engine/tools/compile_shaders.sh"
 
 input=(
     "$sh_dir/../game/shaders/sprite"
-    "$sh_dir/../game/shaders/bmfont"
+    "$sh_dir/../game/shaders/test"
 )
 
 echo "start compiling shaders..."
