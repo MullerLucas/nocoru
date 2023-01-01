@@ -609,6 +609,8 @@ dependencies = [
  "lazy_static",
  "memoffset",
  "num",
+ "serde",
+ "serde_yaml",
 ]
 
 [[package]]

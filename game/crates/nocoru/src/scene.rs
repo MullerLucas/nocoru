@@ -3,8 +3,7 @@ use hell_error::HellResult;
 use hell_gui::text::{HellFont, TextMesh};
 use hell_input::{KeyCode, InputManager};
 use hell_physics::collision::AABB2D;
-use hell_renderer::{shader::SpriteShaderSceneData, render_types::RenderPackage};
-use hell_resources::ResourceManager;
+use hell_renderer::{shader::SpriteShaderSceneData, render_types::RenderPackage, HellRenderer};
 use hell_resources::fonts::FntFile;
 
 use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem, JumpSystem, GravitySystem};
@@ -139,17 +138,17 @@ impl NocoruScene {
         println!("reset scene");
     }
 
-    pub fn load_scene(&mut self, resource_manager: &mut ResourceManager) -> HellResult<()> {
+    pub fn load_scene(&mut self, renderer: &mut HellRenderer) -> HellResult<()> {
         // setup environment
         // -----------------
-        let ground_t1_mat = resource_manager.load_material(Self::GROUND_T1_MAT)?;
+        let ground_t1_mat = renderer.acquire_material_from_file(Self::GROUND_T1_MAT)?;
         for _ in Self::GROUND_START_IDX..=Self::GROUND_END_IDX {
             self.render_pkg.world.add_data(Self::QUAD_MESH, ground_t1_mat, Transform::default());
         }
 
         // setup enemies
         // -------------
-        let enemy_t1_mat = resource_manager.load_material(Self::ENEMY_T1_MAT)?;
+        let enemy_t1_mat = renderer.acquire_material_from_file(Self::ENEMY_T1_MAT)?;
         // let _enemy_t2_mat_idx = resource_manager.load_material(Self::ENEMY_T2_MAT)?;
         for _ in Self::ENEMY_START_IDX..=Self::ENEMY_END_IDX {
             self.render_pkg.world.add_data(Self::QUAD_MESH, enemy_t1_mat, Transform::default());
@@ -157,14 +156,14 @@ impl NocoruScene {
 
         // setup player
         // ------------
-        let player_mat = resource_manager.load_material(Self::PLAYER_MAT)?;
+        let player_mat = renderer.acquire_material_from_file(Self::PLAYER_MAT)?;
         self.render_pkg.world.add_data(Self::QUAD_MESH, player_mat, Transform::default());
 
 
 
         // setup gui
         // ---------
-        let font_mat = resource_manager.load_material(Self::FONT_MAT)?;
+        let font_mat = renderer.acquire_material_from_file(Self::FONT_MAT)?;
         let font = HellFont::new(Self::QUAD_MESH, font_mat.id);
         self.score_txt.set_font(Some(font));
         self.score_txt.set_text("H");
