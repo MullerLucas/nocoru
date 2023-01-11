@@ -609,6 +609,8 @@ dependencies = [
  "lazy_static",
  "memoffset",
  "num",
+ "num-derive",
+ "num-traits",
  "serde",
  "serde_yaml",
 ]
