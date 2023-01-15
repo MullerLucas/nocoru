@@ -3,7 +3,7 @@ use hell_error::HellResult;
 use hell_gui::text::{HellFont, TextMesh};
 use hell_input::{KeyCode, InputManager};
 use hell_physics::collision::AABB2D;
-use hell_renderer::{shader::SpriteShaderSceneData, render_types::RenderPackage, HellRenderer};
+use hell_renderer::{render_types::RenderPackage, HellRenderer};
 use hell_resources::fonts::FntFile;
 
 use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSystem, EneymCollisionSystem, EnvironmentCollisionSystem, JumpSystem, GravitySystem};
@@ -11,7 +11,6 @@ use crate::systems::{MovementSystem, MovementData, EnemySpawnSystem, EnemyKillSy
 
 
 pub struct NocoruScene {
-    pub scene_data: SpriteShaderSceneData,
     render_pkg: RenderPackage,
     pub movement_data: Vec<MovementData>,
     pub colliders: Vec<AABB2D>,
@@ -86,7 +85,6 @@ impl NocoruScene {
     // TODO: error handling
     pub fn new() -> Self {
 
-        let scene_data = SpriteShaderSceneData::default();
         let render_pkg = RenderPackage::default();
         let movement_data = vec![MovementData::default(); Self::ENTITY_COUNT];
         let colliders = vec![AABB2D::default(); Self::ENTITY_COUNT];
@@ -108,7 +106,6 @@ impl NocoruScene {
         let _font_file = FntFile::from_file(font_path).unwrap();
 
         Self {
-            scene_data,
             render_pkg,
             movement_data,
             colliders,
