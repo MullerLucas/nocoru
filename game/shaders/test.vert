@@ -9,8 +9,18 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
     mat4 reserved_0;
 } global_ubo;
 
-layout(push_constant) uniform PushConstants {
+
+struct LocalUbo {
     mat4 model;
+};
+
+// std140 enforces cpp memory layout
+layout(std140, set = 3, binding = 0) readonly buffer LocalStorage {
+    LocalUbo data[];
+} local_storage;
+
+layout(push_constant) uniform PushConstants {
+    uint local_idx;
 } push_constants;
 
 
@@ -22,6 +32,9 @@ layout(location = 0) out vec2 out_tex_coord;
 
 
 void main() {
-    gl_Position = global_ubo.view_proj * push_constants.model *  vec4(in_pos, 1.0);
-    out_tex_coord = in_tex_coord;
+    // gl_Position = global_ubo.view_proj * push_constants.model *  vec4(in_pos, 1.0);
+    mat4 model = local_storage.data[push_constants.local_idx].model;
+    gl_Position = global_ubo.view_proj * model *  vec4(in_pos, 1.0);
+
+    // gl_Position = global_ubo.view_proj * push_constants.model * vec4(in_pos, 1.0);
 }
