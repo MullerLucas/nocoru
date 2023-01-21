@@ -1,7 +1,22 @@
 [workspace]
 members = [
-    "crates/*"
+    "bin/*"
 ]
 
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["helloki <helloki@mailbox.org>"]
+
 [workspace.dependencies]
+hell_common    = { path = "../hellengine/engine/lib/hell_common" }
+hell_error     = { path = "../hellengine/hust/lib/hell_error" }
+hell_input     = { path = "../hellengine/engine/lib/hell_input" }
+hell_app       = { path = "../hellengine/engine/lib/hell_app" }
+hell_winit     = { path = "../hellengine/engine/lib/hell_winit" }
+hell_renderer  = { path = "../hellengine/engine/lib/hell_renderer" }
+hell_resources = { path = "../hellengine/engine/lib/hell_resources" }
+hell_physics   = { path = "../hellengine/engine/lib/hell_physics" }
+hell_gui       = { path = "../hellengine/engine/lib/hell_gui" }
+
 glam = "0.22.0"

@@ -1,0 +1,21 @@
+[package]
+name = "nocoru"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+
+
+[dependencies]
+
+hell_common.workspace = true
+hell_error.workspace = true
+hell_input.workspace = true
+hell_app.workspace = true
+hell_winit.workspace = true
+hell_renderer.workspace = true
+hell_resources.workspace = true
+hell_physics.workspace = true
+hell_gui.workspace = true
+
+glam.workspace = true
