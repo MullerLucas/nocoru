@@ -1,4 +1,0 @@
-[submodule "hellengine"]
-	path = hellengine
-	url = git@gitlab.com:helloki-games/hellengine.git
-    branch = game/nocoru
