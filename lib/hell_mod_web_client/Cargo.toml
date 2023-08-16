@@ -1,0 +1,19 @@
+[package]
+name = "hell_mod_web_client"
+authors.workspace = true
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+# hellmut
+hell_core.workspace = true
+# extern
+console_error_panic_hook.workspace = true
+js-sys.workspace = true
+paste.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde-wasm-bindgen.workspace = true
+wasm-bindgen.workspace = true
+wasm-bindgen-futures.workspace = true
+web-sys.workspace = true

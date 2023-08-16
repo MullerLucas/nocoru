@@ -1,0 +1,11 @@
+[package]
+name = "hell_core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+axum = { version = "0.6.16", optional = true }
+
+[features]
+axum = ["dep:axum"]
