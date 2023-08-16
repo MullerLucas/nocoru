@@ -8,8 +8,8 @@ sh_dir=$(dirname $0)
 shader_sh="$sh_dir/../hellengine/engine/tools/compile_shaders.sh"
 
 input=(
-    "$sh_dir/../game/shaders/sprite"
-    "$sh_dir/../game/shaders/test"
+    "$sh_dir/shaders/sprite"
+    "$sh_dir/shaders/test"
 )
 
 echo "start compiling shaders..."

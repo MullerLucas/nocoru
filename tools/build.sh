@@ -47,14 +47,13 @@ eval "$sh_shader"
 
 # compile game
 # ------------
-game_dir="$sh_dir/../game"
+game_dir="$sh_dir/.."
 
 cd "$game_dir" || exit 1
 
 # cargo-clippy
 
 if [ "$SHOULD_CHECK" = "YES" ]; then
-    echo "TEST: '$SHOULD_CHECK'"
     echo "start checking project..."
     cargo check
 elif [ "$SHOULD_RUN" = "YES" ]; then
