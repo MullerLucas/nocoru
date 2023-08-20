@@ -1,0 +1,15 @@
+[package]
+name = "hell_winit"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+hell_core.workspace = true
+
+hell_common.workspace = true
+hell_input.workspace = true
+hell_app.workspace = true
+
+winit.workspace = true
+

@@ -1,0 +1,8 @@
+[package]
+name = "hell_utils"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+hell_core.workspace = true

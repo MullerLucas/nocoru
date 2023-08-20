@@ -1,0 +1,23 @@
+[package]
+name = "shader_crap"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+hell_core.workspace = true
+hell_renderer.workspace = true
+
+glam.workspace = true
+
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+
+num.workspace = true
+num-traits.workspace = true
+num-derive.workspace = true
+
+pest.workspace = true
+pest_derive.workspace = true
+clap.workspace = true

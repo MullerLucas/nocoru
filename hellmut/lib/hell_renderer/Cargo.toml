@@ -1,0 +1,25 @@
+[package]
+name = "hell_renderer"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+# hellmut
+hell_core.workspace = true
+# enging
+hell_common.workspace = true
+hell_utils.workspace = true
+hell_resources.workspace = true
+
+num.workspace = true
+num-derive.workspace = true
+num-traits.workspace = true
+glam.workspace = true
+ash.workspace = true
+memoffset.workspace = true
+image .workspace = true
+lazy_static.workspace = true
+bitflags.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
