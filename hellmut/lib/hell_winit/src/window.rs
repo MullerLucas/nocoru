@@ -37,7 +37,8 @@ impl Window {
 
 impl HellWindow for Window {
     fn create_surface_info(&self) -> HellResult<HellSurfaceInfo> {
-        use winit::platform::unix::WindowExtUnix;
+        // use winit::platform::unix::WindowExtUnix;
+        use winit::platform::x11::WindowExtX11;
 
         let x11_display = self.window.xlib_display().to_generic_hell_err()?;
         let x11_window = self.window.xlib_window().to_window_hell_err()?;

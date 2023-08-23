@@ -8,7 +8,7 @@ mod scene;
 mod systems;
 
 use hell_app::HellGame;
-use hell_error::HellResult;
+use hell_core::prelude::*;
 use hell_input::InputManager;
 use hell_renderer::{render_types::RenderPackage, HellRenderer};
 use hell_winit::Window;

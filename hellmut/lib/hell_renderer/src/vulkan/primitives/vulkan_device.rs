@@ -62,6 +62,8 @@ impl VulkanLogicDevice {
         let validation_layer_names_input: Vec<_> =
             validation_layer_names.iter().map(|l| l.as_ptr()).collect();
 
+        // HACK(lm): fix
+        #[allow(deprecated)]
         if config::ENABLE_VALIDATION_LAYERS {
             logic_device_create_info.enabled_layer_count =
                 validation_layer_names_input.len() as u32;

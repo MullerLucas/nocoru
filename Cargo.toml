@@ -3,6 +3,11 @@ members = [
     "bin/*"
 ]
 
+exclude = [
+    "hellmut/lib/hell_math",
+    "hellmut/lib/hell_mod_web_client",
+]
+
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
@@ -17,8 +22,8 @@ hell_app    = { path = "hellmut/lib/hell_app" }
 hell_gui    = { path = "hellmut/lib/hell_gui" }
 hell_input  = { path = "hellmut/lib/hell_input" }
 hell_math   = { path = "hellmut/lib/hell_math" }
-hell_mod_llm        = { path = "hellmut/lib/hell_mod_llm" }
-hell_mod_web_client = { path = "hellmut/lib/hell_mod_web_client" }
+# hell_mod_llm        = { path = "hellmut/lib/hell_mod_llm" }
+# hell_mod_web_client = { path = "hellmut/lib/hell_mod_web_client" }
 hell_physics    = { path = "hellmut/lib/hell_physics" }
 hell_renderer   = { path = "hellmut/lib/hell_renderer" }
 hell_resources  = { path = "hellmut/lib/hell_resources" }
