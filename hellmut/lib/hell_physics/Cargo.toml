@@ -1,13 +1,12 @@
 [package]
-name = "hell_physics"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_physics"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
 # hellmut
-hell_core.workspace = true
-# engine
-hell_common.workspace = true
-
-glam.workspace = true
+hell_core   = { path = "../hell_core" }
+hell_common = { path = "../hell_common" }
+# extern
+glam = "0.24.1"

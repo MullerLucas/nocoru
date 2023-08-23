@@ -6,17 +6,21 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["helloki <helloki@mailbox.org>"]
+authors = [ "helloki <helloki@mailbox.org>" ]
 
 [workspace.dependencies]
-hell_common    = { path = "../hellengine/engine/lib/hell_common" }
-hell_error     = { path = "../hellengine/hust/lib/hell_error" }
-hell_input     = { path = "../hellengine/engine/lib/hell_input" }
-hell_app       = { path = "../hellengine/engine/lib/hell_app" }
-hell_winit     = { path = "../hellengine/engine/lib/hell_winit" }
-hell_renderer  = { path = "../hellengine/engine/lib/hell_renderer" }
-hell_resources = { path = "../hellengine/engine/lib/hell_resources" }
-hell_physics   = { path = "../hellengine/engine/lib/hell_physics" }
-hell_gui       = { path = "../hellengine/engine/lib/hell_gui" }
 
-glam = "0.22.0"
+# hellmut - lib
+hell_core   = { path = "hellmut/lib/hell_core" }
+hell_common = { path = "hellmut/lib/hell_common" }
+hell_app    = { path = "hellmut/lib/hell_app" }
+hell_gui    = { path = "hellmut/lib/hell_gui" }
+hell_input  = { path = "hellmut/lib/hell_input" }
+hell_math   = { path = "hellmut/lib/hell_math" }
+hell_mod_llm        = { path = "hellmut/lib/hell_mod_llm" }
+hell_mod_web_client = { path = "hellmut/lib/hell_mod_web_client" }
+hell_physics    = { path = "hellmut/lib/hell_physics" }
+hell_renderer   = { path = "hellmut/lib/hell_renderer" }
+hell_resources  = { path = "hellmut/lib/hell_resources" }
+hell_utils      = { path = "hellmut/lib/hell_utils" }
+hell_winit      = { path = "hellmut/lib/hell_winit" }

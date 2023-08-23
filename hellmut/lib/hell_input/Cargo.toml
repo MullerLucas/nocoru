@@ -1,13 +1,13 @@
 [package]
-name = "hell_input"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_input"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-hell_core.workspace = true
+hell_core = { path = "../hell_core" }
 
-bitflags.workspace = true
-strum.workspace = true
-num-traits.workspace = true
-num-derive.workspace = true
+bitflags   = "2.4.0"
+strum      = "0.25.0"
+num-traits = "0.2.16"
+num-derive = "0.4.0"

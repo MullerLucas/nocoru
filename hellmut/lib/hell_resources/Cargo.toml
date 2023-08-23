@@ -1,12 +1,13 @@
 [package]
-name = "hell_resources"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_resources"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-hell_core.workspace = true
-
-image.workspace = true
-serde.workspace = true
-serde_yaml.workspace = true
+# hellmut
+hell_core = { path = "../hell_core" }
+# extern
+image      = "0.24.7"
+serde      = { version = "1.0.185", features = ["derive"] }
+serde_yaml = "0.9.25"

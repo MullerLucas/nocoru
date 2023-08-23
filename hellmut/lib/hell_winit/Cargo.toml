@@ -1,15 +1,14 @@
 [package]
-name = "hell_winit"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_winit"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-hell_core.workspace = true
-
-hell_common.workspace = true
-hell_input.workspace = true
-hell_app.workspace = true
-
-winit.workspace = true
-
+# hellmut
+hell_core   = { path = "../hell_core" }
+hell_common = { path = "../hell_common" }
+hell_input  = { path = "../hell_input" }
+hell_app    = { path = "../hell_app" }
+# extern
+winit = "0.28.6"

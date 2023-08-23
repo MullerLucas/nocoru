@@ -1,8 +1,8 @@
 [package]
-name = "hell_core"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_core"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
 axum = { version = "0.6.16", optional = true }

@@ -1,25 +1,24 @@
 [package]
-name = "hell_renderer"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_renderer"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
 # hellmut
-hell_core.workspace = true
-# enging
-hell_common.workspace = true
-hell_utils.workspace = true
-hell_resources.workspace = true
-
-num.workspace = true
-num-derive.workspace = true
-num-traits.workspace = true
-glam.workspace = true
-ash.workspace = true
-memoffset.workspace = true
-image .workspace = true
-lazy_static.workspace = true
-bitflags.workspace = true
-serde.workspace = true
-serde_yaml.workspace = true
+hell_core      = { path = "../hell_core" }
+hell_common    = { path = "../hell_common" }
+hell_utils     = { path = "../hell_utils" }
+hell_resources = { path = "../hell_resources" }
+# extern
+num         = "0.4.1"
+num-derive  = "0.4.0"
+num-traits  = "0.2.16"
+glam        = "0.24.1"
+ash         = "0.37.3"
+memoffset   = "0.9.0"
+image       = "0.24.7"
+lazy_static = "1.4.0"
+bitflags    = "2.4.0"
+serde       = "1.0.185"
+serde_yaml  = "0.9.25"

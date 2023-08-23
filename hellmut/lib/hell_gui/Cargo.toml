@@ -1,9 +1,11 @@
 [package]
-name = "hell_gui"
-version.workspace = true
-edition.workspace = true
+name    = "hell_gui"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-hell_common.workspace = true
-
-glam.workspace = true
+# hellmut
+hell_common = { path = "../hell_common" }
+# external
+glam = "0.24.1"

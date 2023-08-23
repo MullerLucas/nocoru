@@ -1,8 +1,8 @@
 [package]
-name = "hell_math"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_math"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-num.workspace = true
+num = "0.4.1"

@@ -8,14 +8,21 @@ authors.workspace = true
 
 [dependencies]
 
-hell_common.workspace = true
-hell_error.workspace = true
-hell_input.workspace = true
+# hellmut
+hell_core.workspace = true
 hell_app.workspace = true
-hell_winit.workspace = true
+hell_common.workspace = true
+hell_gui.workspace = true
+hell_input.workspace = true
+hell_math.workspace = true
+hell_mod_llm.workspace = true
+hell_mod_web_client.workspace = true
+hell_physics.workspace = true
 hell_renderer.workspace = true
 hell_resources.workspace = true
-hell_physics.workspace = true
-hell_gui.workspace = true
+hell_utils.workspace = true
+hell_winit.workspace = true
 
-glam.workspace = true
+# external
+# glam.workspace = true
+glam = "0.24.1"

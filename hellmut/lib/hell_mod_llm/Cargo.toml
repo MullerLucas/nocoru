@@ -1,17 +1,18 @@
 [package]
-name = "hell_mod_llm"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
+name    = "hell_mod_llm"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lucas Muller <muller.lucas@mailbox.org>" ]
 
 [dependencies]
-hell_core.workspace = true
-
-async-trait.workspace = true
-reqwest.workspace = true
-serde.workspace = true
-serde_json.workspace = true
-tracing.workspace = true
+# hellmut
+hell_core  = { path = "../hell_core" }
+# external
+async-trait = "0.1.73"
+reqwest     = { version = "0.11.19", features = ["json"] }
+serde       = "1.0.185"
+serde_json  = "1.0.105"
+tracing     = "0.1.37"
 
 [features]
 server = []
