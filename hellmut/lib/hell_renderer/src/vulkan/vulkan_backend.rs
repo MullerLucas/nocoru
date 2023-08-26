@@ -7,7 +7,7 @@ use std::cell::RefCell;
 use ash::vk;
 use hell_common::transform::Transform;
 use hell_common::window::HellWindowExtent;
-use hell_core::collections::dyn_array::DynArray;
+use hell_core::collections::stack_array::StackVec;
 use hell_core::error::{HellResult, HellError, HellErrorKind, OptToHellErr, ErrToHellErr};
 use crate::camera::HellCamera;
 use crate::config;
@@ -90,7 +90,7 @@ impl VulkanBackend {
         // clear-values
         // -----------
         const MAX_CLEAR_VALUE_COUNT: usize = 2;
-        let mut clear_values = DynArray::<vk::ClearValue, MAX_CLEAR_VALUE_COUNT>::default();
+        let mut clear_values = StackVec::<vk::ClearValue, MAX_CLEAR_VALUE_COUNT>::default();
 
         let should_clear_color = render_pass.clear_flags.contains(RenderPassClearFlags::COLORBUFFER);
         if should_clear_color {

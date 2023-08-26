@@ -1,12 +1,12 @@
 use std::{array, fmt::{Debug, Display, Pointer}};
 
 
-pub struct DynArray<T, const SIZE: usize> {
+pub struct StackVec<T, const SIZE: usize> {
     data: [T; SIZE],
     len: usize,
 }
 
-impl<T, const SIZE: usize> Default for DynArray<T, SIZE>
+impl<T, const SIZE: usize> Default for StackVec<T, SIZE>
     where T: Default,
 {
     fn default() -> Self {
@@ -14,7 +14,7 @@ impl<T, const SIZE: usize> Default for DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> DynArray<T, SIZE>
+impl<T, const SIZE: usize> StackVec<T, SIZE>
     where [T; SIZE]: Default,
 {
     pub fn from_default_array() -> Self {
@@ -23,7 +23,7 @@ impl<T, const SIZE: usize> DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> Into<Vec<T>> for DynArray<T, SIZE>
+impl<T, const SIZE: usize> Into<Vec<T>> for StackVec<T, SIZE>
     where T: Default + Clone
 {
     fn into(self) -> Vec<T> {
@@ -31,7 +31,7 @@ impl<T, const SIZE: usize> Into<Vec<T>> for DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> From<&[T]> for DynArray<T, SIZE>
+impl<T, const SIZE: usize> From<&[T]> for StackVec<T, SIZE>
     where T: Default + Clone
 {
     fn from(val: &[T]) -> Self {
@@ -47,7 +47,7 @@ impl<T, const SIZE: usize> From<&[T]> for DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> DynArray<T, SIZE> {
+impl<T, const SIZE: usize> StackVec<T, SIZE> {
     pub fn new(data: [T; SIZE], len: usize) -> Self {
         if len > SIZE {
             panic!("invalid length: '{}'", len);
@@ -113,7 +113,7 @@ impl<T, const SIZE: usize> DynArray<T, SIZE> {
     }
 }
 
-impl<T, const SIZE: usize> std::ops::Index<usize> for DynArray<T, SIZE> {
+impl<T, const SIZE: usize> std::ops::Index<usize> for StackVec<T, SIZE> {
     type Output = T;
 
     #[inline]
@@ -122,14 +122,14 @@ impl<T, const SIZE: usize> std::ops::Index<usize> for DynArray<T, SIZE> {
     }
 }
 
-impl<T, const SIZE: usize> std::ops::IndexMut<usize> for DynArray<T, SIZE> {
+impl<T, const SIZE: usize> std::ops::IndexMut<usize> for StackVec<T, SIZE> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         self.data.index_mut(index)
     }
 }
 
-impl<T, const SIZE: usize> Display for DynArray<T, SIZE>
+impl<T, const SIZE: usize> Display for StackVec<T, SIZE>
     where T: Display,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -137,7 +137,7 @@ impl<T, const SIZE: usize> Display for DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> Debug for DynArray<T, SIZE>
+impl<T, const SIZE: usize> Debug for StackVec<T, SIZE>
     where T: Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -145,7 +145,7 @@ impl<T, const SIZE: usize> Debug for DynArray<T, SIZE>
     }
 }
 
-impl<T, const SIZE: usize> Clone for DynArray<T, SIZE>
+impl<T, const SIZE: usize> Clone for StackVec<T, SIZE>
     where T: Clone
 {
     fn clone(&self) -> Self {

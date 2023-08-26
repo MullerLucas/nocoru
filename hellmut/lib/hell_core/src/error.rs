@@ -67,6 +67,10 @@ impl HellErrorHelper {
         eprintln!("[ERR]: {msg}");
         HellError::new(HellErrorKind::RequestError, HellErrorContent::Message(msg))
     }
+
+    pub fn no_free_space_msg_err(msg: impl Into<String>) -> HellError {
+        HellError::new(HellErrorKind::NotFreeSpaceError, HellErrorContent::Message(msg.into()))
+    }
 }
 
 
@@ -83,6 +87,7 @@ pub enum HellErrorKind  {
     ResourceError,
     WebError,
     RequestError,
+    NotFreeSpaceError,
 }
 
 #[derive(Clone, fmt::Debug)]
