@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#                         <path>  <name>  <branch>
+git subtree push --prefix=hellmut hellmut project/nocoru

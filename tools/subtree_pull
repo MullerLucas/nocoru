@@ -1,0 +1,3 @@
+#!/bin/bash
+#                  <path>         <name>  <branch>
+git subtree pull --prefix=hellmut hellmut project/nocoru --squah
