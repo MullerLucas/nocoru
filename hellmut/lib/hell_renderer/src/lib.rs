@@ -5,7 +5,7 @@
 pub mod vulkan;
 
 mod hell_renderer;
-pub use hell_renderer::{HellRenderer, HellRendererInfo};
+pub use crate::hell_renderer::{HellRenderer, HellRendererInfo};
 
 pub mod render_types;
 pub mod scene;

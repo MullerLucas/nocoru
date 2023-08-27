@@ -1,5 +1,5 @@
 mod shader;
-use hell_core::{error::{HellResult, HellErrorKind, HellError}, collections::stack_array::StackVec};
+use hell_core::{error::{HellResult, HellErrorKind, HellError}, collections::stack_array::StackArray};
 pub use shader::*;
 pub mod shader_data;
 
@@ -127,7 +127,7 @@ impl VulkanPipeline {
 
         // push-constants
         // --------------
-        let mut push_constants: StackVec<vk::PushConstantRange, {config::VULKAN_SHADER_MAX_PUSH_CONSTANTS}> = StackVec::default();
+        let mut push_constants: StackArray<vk::PushConstantRange, {config::VULKAN_SHADER_MAX_PUSH_CONSTANTS}> = StackArray::default();
         for pcr in push_constant_infos {
             push_constants.push(vk::PushConstantRange::builder()
                 .offset(pcr.range.offset as u32)

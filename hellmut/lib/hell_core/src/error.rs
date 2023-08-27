@@ -68,8 +68,12 @@ impl HellErrorHelper {
         HellError::new(HellErrorKind::RequestError, HellErrorContent::Message(msg))
     }
 
-    pub fn no_free_space_msg_err(msg: impl Into<String>) -> HellError {
-        HellError::new(HellErrorKind::NotFreeSpaceError, HellErrorContent::Message(msg.into()))
+    pub fn add_to_full_msg_err(msg: impl Into<String>) -> HellError {
+        HellError::new(HellErrorKind::AddToFullError, HellErrorContent::Message(msg.into()))
+    }
+
+    pub fn remove_from_empty_msg_err(msg: impl Into<String>) -> HellError {
+        HellError::new(HellErrorKind::RemoveFromEmptyError, HellErrorContent::Message(msg.into()))
     }
 }
 
@@ -87,7 +91,8 @@ pub enum HellErrorKind  {
     ResourceError,
     WebError,
     RequestError,
-    NotFreeSpaceError,
+    RemoveFromEmptyError,
+    AddToFullError,
 }
 
 #[derive(Clone, fmt::Debug)]
@@ -231,12 +236,14 @@ impl axum::response::IntoResponse for HellError {
     fn into_response(self) -> axum::response::Response {
         use axum::http::StatusCode;
         let body = match self.inner.kind {
-            HellErrorKind::GenericError => "Generic Error",
-            HellErrorKind::WindowError  => "Window Error",
-            HellErrorKind::RenderError  => "Render Error",
-            HellErrorKind::ResourceError => "Resource Error",
-            HellErrorKind::WebError     => "Web Error",
-            HellErrorKind::RequestError => "Request Error",
+            HellErrorKind::GenericError     => "Generic Error",
+            HellErrorKind::WindowError      => "Window Error",
+            HellErrorKind::RenderError      => "Render Error",
+            HellErrorKind::ResourceError    => "Resource Error",
+            HellErrorKind::WebError         => "Web Error",
+            HellErrorKind::RequestError     => "Request Error",
+            HellErrorKind::RemoveFromEmptyError => "Remove From Empty Error",
+            HellErrorKind::AddToFullError       => "Add To Full Error"
         };
 
         (StatusCode::INTERNAL_SERVER_ERROR, body).into_response()

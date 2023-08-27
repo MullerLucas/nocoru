@@ -4,7 +4,7 @@
 use std::{array, collections::HashMap, mem::{self, size_of}};
 
 use ash::vk::{self, WriteDescriptorSet};
-use hell_core::{collections::stack_array::StackVec, error::{HellResult, OptToHellErr, HellErrorHelper}};
+use hell_core::{collections::stack_array::StackArray, error::{HellResult, OptToHellErr, HellErrorHelper}};
 use crate::{vulkan::{VulkanContextRef, primitives::{VulkanDescriptorSetGroup, VulkanSwapchain,  VulkanRenderPass, VulkanImage, VulkanBuffer, VulkanMemoryMap, VulkanCommands, VulkanSampler, VulkanTexture, VulkanCommandBuffer}, pipeline::{VulkanShader, VulkanPipeline}, VulkanFrame}, resources::{ResourceHandle, TextureManager}, render_types::{PerFrame, ValueRange, MemRange, NumberFormat}, config};
 
 
@@ -24,7 +24,7 @@ pub const fn get_aligned_range(offset: usize, size: usize, alignment: usize) -> 
 // ----------------------------------------------------------------------------
 
 pub type PerScope<T> = [T; ShaderScope::SCOPE_COUNT];
-pub type PerSet<T> = StackVec<T, {ShaderScope::SCOPE_COUNT}>;
+pub type PerSet<T> = StackArray<T, {ShaderScope::SCOPE_COUNT}>;
 
 
 // ----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ pub struct ScopeState {
     pub buffer_offset: usize,
     pub buffer_stride: usize,
     pub buffer_desc_sets: PerFrame<vk::DescriptorSet>,
-    pub textures: StackVec<ResourceHandle, {config::VULKAN_MAX_SAMPLERS_PER_SHADER}>,
+    pub textures: StackArray<ResourceHandle, {config::VULKAN_MAX_SAMPLERS_PER_SHADER}>,
 }
 
 impl ScopeState {
@@ -167,7 +167,7 @@ pub struct ShaderProgramBuilder {
     depth_test_enabled: bool,
     is_wireframe: bool,
     shader_path: String,
-    attributes: StackVec<AttributeInfo, { Self::MAX_ATTRIBUTE_COUNT }>,
+    attributes: StackArray<AttributeInfo, { Self::MAX_ATTRIBUTE_COUNT }>,
     use_set: PerScope<bool>,
     sampler_counts: PerScope<usize>,
     uniforms: PerScope<Vec<UniformInfo>>,
@@ -206,7 +206,7 @@ impl ShaderProgramBuilder {
             depth_test_enabled: false,
             is_wireframe: false,
             shader_path: shader_path.into(),
-            attributes: StackVec::default(),
+            attributes: StackArray::default(),
             uniform_lookups: HashMap::new(),
             use_set: Default::default(),
             uniforms: Default::default(),
@@ -352,7 +352,7 @@ impl ShaderProgramBuilder {
         // create vertex-data
         // ------------------
         let mut vert_stride = 0_usize;
-        let mut vert_attrb_desc: StackVec<vk::VertexInputAttributeDescription, { Self::MAX_ATTRIBUTE_COUNT }> = StackVec::default();
+        let mut vert_attrb_desc: StackArray<vk::VertexInputAttributeDescription, { Self::MAX_ATTRIBUTE_COUNT }> = StackArray::default();
         self.attributes.as_slice().iter().enumerate().for_each(|(idx, attr)| {
             vert_attrb_desc.push(vk::VertexInputAttributeDescription::builder()
                 .location(idx as u32)
@@ -398,7 +398,7 @@ impl ShaderProgramBuilder {
 
         // determine used sets: descriptor-layouts + mem-ranges
         // ----------------------------------------------------
-        let mut set_desc_layouts: StackVec<vk::DescriptorSetLayout, {ShaderScope::SCOPE_COUNT}> = StackVec::default();
+        let mut set_desc_layouts: StackArray<vk::DescriptorSetLayout, {ShaderScope::SCOPE_COUNT}> = StackArray::default();
         let mut scope_desc_layouts: PerScope<Option<vk::DescriptorSetLayout>> = Default::default();
         let mut scope_ranges: PerScope<_> = Default::default();
         let mut main_buffer_size = 0;
@@ -431,7 +431,7 @@ impl ShaderProgramBuilder {
             // create layout
             // -------------
             let sampler_count = self.sampler_counts[idx];
-            let mut bindings: StackVec<vk::DescriptorSetLayoutBinding, 2> = StackVec::default();
+            let mut bindings: StackArray<vk::DescriptorSetLayoutBinding, 2> = StackArray::default();
 
             // main-layouts => uniform
             if idx != ShaderScope::Local as usize {
@@ -507,7 +507,7 @@ impl ShaderProgramBuilder {
             buffer_offset: 0,
             buffer_stride: scope_strides[ShaderScope::Global as usize],
             buffer_desc_sets: global_desc_sets,
-            textures: StackVec::from(self.global_tex.as_slice())
+            textures: StackArray::from(self.global_tex.as_slice())
         };
         let scope_states: PerScope<Vec<ScopeState>> = [
             vec![global_state],
@@ -698,7 +698,7 @@ impl ShaderProgram {
         let idx = states.len();
         let desc_sets = VulkanDescriptorSetGroup::allocate_sets_for_layout(&self.ctx, layout, self.desc_pool)?;
         let (offset, stride) = self.calc_buffer_offset_and_size(scope, idx)?;
-        let mut textures = StackVec::default();
+        let mut textures = StackArray::default();
         tex.iter().for_each(|t| textures.push(*t));
 
         let state = ScopeState {
@@ -732,7 +732,7 @@ impl ShaderProgram {
         let desc_set = state.buffer_desc_set(frame.idx());
         let tex_handles = state.textures();
 
-        let mut write_desc: StackVec<vk::WriteDescriptorSet, 2> = StackVec::default();
+        let mut write_desc: StackArray<vk::WriteDescriptorSet, 2> = StackArray::default();
 
         // add buffer writes
         // -----------------
@@ -763,7 +763,7 @@ impl ShaderProgram {
                 return Err(HellErrorHelper::render_msg_err("sampler-count and tex-count do not match"));
             }
 
-            let mut image_infos: StackVec<vk::DescriptorImageInfo, {config::VULKAN_SHADER_MAX_GLOBAL_TEXTURES}> = StackVec::default();
+            let mut image_infos: StackArray<vk::DescriptorImageInfo, {config::VULKAN_SHADER_MAX_GLOBAL_TEXTURES}> = StackArray::default();
             for (idx, handle) in tex_handles.iter().enumerate() {
                 let tex = tex_man.texture_res(*handle)?;
 

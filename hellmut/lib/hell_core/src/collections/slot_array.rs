@@ -25,7 +25,7 @@ impl<T, const SIZE: usize> SlotArray<T, SIZE> {
 
     pub fn try_push(&mut self, value: T) -> HellResult<HellHandle> {
         let Some(idx) = self.find_first_free_slot() else {
-            return Err(HellErrorHelper::no_free_space_msg_err("slot array is full"));
+            return Err(HellErrorHelper::add_to_full_msg_err("slot array is full"));
         };
 
         self.data[idx] = value;

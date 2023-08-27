@@ -1,5 +1,5 @@
 use ash::vk;
-use hell_core::collections::stack_array::StackVec;
+use hell_core::collections::stack_array::StackArray;
 use hell_core::error::HellResult;
 
 use crate::vulkan::VulkanContextRef;
@@ -59,7 +59,7 @@ impl VulkanRenderPass {
         // attachments
         // -----------
         const MAX_ATTACHMENT_COUNT: usize = 2;
-        let mut attachments = StackVec::<vk::AttachmentDescription, MAX_ATTACHMENT_COUNT>::default();
+        let mut attachments = StackArray::<vk::AttachmentDescription, MAX_ATTACHMENT_COUNT>::default();
 
         // color attachments
         // -----------------
