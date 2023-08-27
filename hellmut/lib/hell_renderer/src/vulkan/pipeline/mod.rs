@@ -129,11 +129,13 @@ impl VulkanPipeline {
         // --------------
         let mut push_constants: StackArray<vk::PushConstantRange, {config::VULKAN_SHADER_MAX_PUSH_CONSTANTS}> = StackArray::default();
         for pcr in push_constant_infos {
-            push_constants.push(vk::PushConstantRange::builder()
-                .offset(pcr.range.offset as u32)
-                .size(pcr.range.range as u32)
-                .stage_flags(vk::ShaderStageFlags::ALL_GRAPHICS) // TODO: make selectable
-                .build())
+            push_constants.push(
+                vk::PushConstantRange::builder()
+                    .offset(pcr.range.offset as u32)
+                    .size(pcr.range.range as u32)
+                    .stage_flags(vk::ShaderStageFlags::ALL_GRAPHICS) // TODO: make selectable
+                    .build()
+            )
         }
 
         // dyn-state

@@ -1,152 +1,258 @@
-use std::{array, fmt::{Debug, Display, Pointer}};
+use std::array;
+use std::ops::{Deref, DerefMut, IndexMut};
+use std::slice::SliceIndex;
+use std::{fmt, ops::Index};
+use std::mem::MaybeUninit;
 
+use crate::error::{HellResult, HellErrorHelper};
 
-pub struct StackArray<T, const SIZE: usize> {
-    data: [T; SIZE],
-    len: usize,
+pub struct StackArray<T, const N: usize> {
+    data: [MaybeUninit<T>; N],
+    len:  usize,
 }
 
-impl<T, const SIZE: usize> Default for StackArray<T, SIZE>
-    where T: Default,
-{
-    fn default() -> Self {
-        Self::from_fn(|_| T::default())
-    }
-}
-
-impl<T, const SIZE: usize> StackArray<T, SIZE>
-    where [T; SIZE]: Default,
-{
-    pub fn from_default_array() -> Self {
-        let data: [T; SIZE] = Default::default();
-        Self::new(data, 0)
-    }
-}
-
-impl<T, const SIZE: usize> Into<Vec<T>> for StackArray<T, SIZE>
-    where T: Default + Clone
-{
-    fn into(self) -> Vec<T> {
-        self.to_vec()
-    }
-}
-
-impl<T, const SIZE: usize> From<&[T]> for StackArray<T, SIZE>
-    where T: Default + Clone
-{
-    fn from(val: &[T]) -> Self {
-        let mut res = Self::from_fn(|idx| {
-            if val.len() > idx {
-                val[idx].clone()
-            } else {
-                T::default()
-            }
-        });
-        res.len = val.len().min(SIZE);
-        res
-    }
-}
-
-impl<T, const SIZE: usize> StackArray<T, SIZE> {
-    pub fn new(data: [T; SIZE], len: usize) -> Self {
-        debug_assert!(len <= SIZE);
-
+impl<T, const N: usize> StackArray<T, N> {
+    #[inline]
+    pub fn new() -> Self {
         Self {
-            data,
-            len,
+            // SAFETY: safe because we `assume_init` on an array with elements of type `MaybeUninit`
+            data: unsafe { MaybeUninit::uninit().assume_init() },
+            len:  0,
         }
     }
-    pub fn from_fn(cb: impl FnMut(usize) -> T) -> Self {
-        let data = array::from_fn(cb);
-        Self::new(data, 0)
+
+    #[inline]
+    pub fn from_fn(cb: impl FnMut(usize) -> MaybeUninit<T>) -> Self {
+        Self {
+            data: array::from_fn(cb),
+            len: 0
+        }
     }
 
-    // ------------------------------------------------------------------------
+    #[inline]
+    pub fn from_defaults() -> Self
+        where T: Default,
+    {
+        Self::from_fn(|_| MaybeUninit::new(Default::default()))
+    }
 
+
+    #[inline]
     pub fn len(&self) -> usize {
         self.len
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
-        self.len() == 0
+        self.len == 0
     }
 
+    #[inline]
     pub fn is_full(&self) -> bool {
-        self.len == SIZE
+        self.len == N
     }
 
-    pub fn as_slice(&self) -> &[T] {
-        &self.data[0..self.len()]
-    }
+    pub fn push(&mut self, value: T) {
+        debug_assert!(!self.is_full());
 
-    pub fn push(&mut self, val: T) {
-        if self.is_full() {
-            panic!("trying to push into a full DynArray");
-        }
-
-        self.data[self.len] = val;
+        self.data[self.len].write(value);
         self.len += 1;
     }
 
-    pub fn set(&mut self, idx: usize, val: T) {
-        if idx >= self.len() {
-            panic!("trying to set invalid index '{}'", idx);
+    pub fn try_push(&mut self, value: T) -> HellResult<()> {
+        if self.is_full() {
+            return Err(HellErrorHelper::add_to_full_msg_err("trying to push into full StackArray"));
         }
 
-        self.data[idx] = val;
+        self.data[self.len].write(value);
+        self.len += 1;
+        Ok(())
     }
 
-    pub fn get(&self, idx: usize) -> Option<&T> {
-        self.data.get(idx)
+    pub fn pop(&mut self) -> T {
+        debug_assert!(!self.is_empty());
+
+        self.len -= 1;
+        let mut value = MaybeUninit::uninit();
+        std::mem::swap(&mut value, &mut self.data[self.len]);
+        unsafe { value.assume_init() }
     }
 
-    pub fn get_mut(&mut self, idx: usize) -> Option<&mut T> {
-        self.data.get_mut(idx)
+    pub fn try_pop(&mut self) -> HellResult<T> {
+        if self.is_empty() {
+            return Err(HellErrorHelper::remove_from_empty_msg_err("trying remove from empty StackArray"));
+        }
+
+        self.len -= 1;
+        let mut value = MaybeUninit::uninit();
+        std::mem::swap(&mut value, &mut self.data[self.len]);
+        Ok(unsafe { value.assume_init() })
     }
 
-    pub fn to_vec(self) -> Vec<T> {
-        let mut v = Vec::with_capacity(self.len());
-        for data in self.data { v.push(data); }
-        v
+    #[inline]
+    pub fn extend_from_slice(&mut self, value: &[T])
+        where T: Clone
+    {
+        debug_assert!(self.len + value.len() <= N);
+        self.len += value.len();
+
+        for (idx, val) in value.iter().cloned().enumerate() {
+            self.data[idx + self.len].write(val);
+        }
+    }
+
+    #[inline]
+    pub fn as_slice(&self) -> &[T] {
+        unsafe {
+            std::mem::transmute::<_, &[T]>(
+                &self.data[0..self.len]
+            )
+        }
+    }
+
+    #[inline]
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        unsafe {
+            std::mem::transmute::<_, &mut [T]>(
+                &mut self.data[0..self.len]
+            )
+        }
     }
 }
 
-impl<T, const SIZE: usize> std::ops::Index<usize> for StackArray<T, SIZE> {
+impl<T, const N: usize> Default for StackArray<T, N> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<T, I, const N: usize> Index<I> for StackArray<T, N>
+    where I: SliceIndex<[MaybeUninit<T>], Output = MaybeUninit<T>>
+{
     type Output = T;
 
     #[inline]
-    fn index(&self, index: usize) -> &Self::Output {
-        self.data.index(index)
+    fn index(&self, index: I) -> &Self::Output {
+        // SAFETY: data will be initialized for valid indices
+        unsafe {
+            self.data.index(index).assume_init_ref()
+        }
     }
 }
 
-impl<T, const SIZE: usize> std::ops::IndexMut<usize> for StackArray<T, SIZE> {
+impl<T, I, const N: usize> IndexMut<I> for StackArray<T, N>
+    where I: SliceIndex<[MaybeUninit<T>], Output = MaybeUninit<T>>
+{
     #[inline]
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        self.data.index_mut(index)
+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+        // SAFETY: data will be initialized for valid indices
+        unsafe {
+            self.data.index_mut(index).assume_init_mut()
+        }
+    }
+
+}
+
+impl<T: Clone, const N: usize> From<[T; N]> for StackArray<T, N> {
+    #[inline]
+    fn from(value: [T; N]) -> Self {
+        let mut result = Self::new();
+        result.extend_from_slice(&value);
+        result
     }
 }
 
-impl<T, const SIZE: usize> Display for StackArray<T, SIZE>
-    where T: Display,
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.as_slice().fmt(f)
+impl<T: Clone, const N: usize> From<&[T]> for StackArray<T, N> {
+    #[inline]
+    fn from(value: &[T]) -> Self {
+        let mut result = Self::new();
+        result.extend_from_slice(value);
+        result
     }
 }
 
-impl<T, const SIZE: usize> Debug for StackArray<T, SIZE>
-    where T: Debug
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.as_slice().fmt(f)
+impl<T, const N: usize> AsRef<[T]> for StackArray<T, N> {
+    #[inline]
+    fn as_ref(&self) -> &[T] {
+        self.as_slice()
     }
 }
 
-impl<T, const SIZE: usize> Clone for StackArray<T, SIZE>
-    where T: Clone
+impl<T, const N: usize> AsMut<[T]> for StackArray<T, N> {
+    #[inline]
+    fn as_mut(&mut self) -> &mut [T] {
+        self.as_mut_slice()
+    }
+}
+
+impl<T, const N: usize> Deref for StackArray<T, N> {
+    type Target = [T];
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        self.as_slice()
+    }
+}
+
+impl<T, const N: usize> DerefMut for StackArray<T, N> {
+    #[inline]
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.as_mut_slice()
+    }
+}
+
+// TODO(lm): remove trailing ', '
+impl<T, const N: usize> fmt::Debug for StackArray<T, N>
+    where T: fmt::Debug
 {
-    fn clone(&self) -> Self {
-        Self { data: self.data.clone(), len: self.len.clone() }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "len: '{:?}', data: [", self.len)?;
+
+        for idx in 0..self.len {
+            unsafe { write!(f, "{:?}, ", self.data[idx].assume_init_ref())?; }
+        }
+
+        write!(f, "]")?;
+        Ok(())
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_push() {
+        let mut arr = StackArray::<i32, 3>::default();
+        assert_eq!(arr.len(), 0);
+
+        arr.push(1);
+        assert_eq!(arr.len(), 1);
+        arr.push(2);
+        assert_eq!(arr.len(), 2);
+
+        assert!(arr.try_push(3).is_ok());
+        assert!(arr.try_push(4).is_err());
+    }
+
+    #[test]
+    fn test_pop() {
+        let mut arr = StackArray::<i32, 3>::default();
+
+        arr.push(1);
+        arr.push(2);
+        arr.push(3);
+        assert_eq!(arr.len(), 3);
+
+        arr.pop();
+        assert_eq!(arr.len(), 2);
+        arr.pop();
+        assert_eq!(arr.len(), 1);
+
+        assert!(arr.try_pop().is_ok());
+        assert!(arr.try_pop().is_err());
     }
 }

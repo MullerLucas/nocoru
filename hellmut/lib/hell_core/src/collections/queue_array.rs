@@ -166,51 +166,51 @@ mod tests {
 
     #[test]
     fn test_enqueue() -> HellResult<()> {
-        let mut queue = QueueArray::<i32, 5>::default();
-        assert_eq!(queue.len(), 0);
-        queue.try_enqueue(1)?;
-        assert_eq!(queue.len(), 1);
-        queue.try_enqueue(2)?;
-        assert_eq!(queue.len(), 2);
-        queue.try_enqueue(3)?;
-        queue.try_enqueue(4)?;
-        queue.try_enqueue(5)?;
-        assert!(queue.try_enqueue(6).is_err());
+        let mut arr = QueueArray::<i32, 5>::default();
+        assert_eq!(arr.len(), 0);
+        arr.try_enqueue(1)?;
+        assert_eq!(arr.len(), 1);
+        arr.try_enqueue(2)?;
+        assert_eq!(arr.len(), 2);
+        arr.try_enqueue(3)?;
+        arr.try_enqueue(4)?;
+        arr.try_enqueue(5)?;
+        assert!(arr.try_enqueue(6).is_err());
         Ok(())
     }
 
     #[test]
     fn test_dequeue() -> HellResult<()> {
-        let mut queue = QueueArray::<i32, 3>::default();
-        queue.try_enqueue(1)?;
-        queue.try_enqueue(2)?;
-        queue.try_enqueue(3)?;
-        assert_eq!(queue.len(), 3);
-        assert_eq!(queue.try_dequeue()?, 1);
-        assert_eq!(queue.try_dequeue()?, 2);
-        assert_eq!(queue.try_dequeue()?, 3);
+        let mut arr = QueueArray::<i32, 3>::default();
+        arr.try_enqueue(1)?;
+        arr.try_enqueue(2)?;
+        arr.try_enqueue(3)?;
+        assert_eq!(arr.len(), 3);
+        assert_eq!(arr.try_dequeue()?, 1);
+        assert_eq!(arr.try_dequeue()?, 2);
+        assert_eq!(arr.try_dequeue()?, 3);
         Ok(())
     }
 
     #[test]
     fn test_cycle() -> HellResult<()> {
-        let mut queue = QueueArray::<i32, 3>::default();
-        queue.try_enqueue(1)?;
-        queue.try_enqueue(2)?;
-        queue.try_enqueue(3)?;
-        assert_eq!(queue.len(), 3);
+        let mut arr = QueueArray::<i32, 3>::default();
+        arr.try_enqueue(1)?;
+        arr.try_enqueue(2)?;
+        arr.try_enqueue(3)?;
+        assert_eq!(arr.len(), 3);
 
-        assert_eq!(queue.try_dequeue()?, 1);
-        queue.try_enqueue(4)?;
-        assert_eq!(queue.try_dequeue()?, 2);
-        queue.try_enqueue(5)?;
-        assert_eq!(queue.try_dequeue()?, 3);
+        assert_eq!(arr.try_dequeue()?, 1);
+        arr.try_enqueue(4)?;
+        assert_eq!(arr.try_dequeue()?, 2);
+        arr.try_enqueue(5)?;
+        assert_eq!(arr.try_dequeue()?, 3);
 
-        assert_eq!(queue.try_dequeue()?, 4);
-        assert_eq!(queue.try_dequeue()?, 5);
-        assert!   (queue.try_dequeue().is_err());
+        assert_eq!(arr.try_dequeue()?, 4);
+        assert_eq!(arr.try_dequeue()?, 5);
+        assert!   (arr.try_dequeue().is_err());
 
-        assert_eq!(queue.len(), 0);
+        assert_eq!(arr.len(), 0);
         Ok(())
     }
 }
