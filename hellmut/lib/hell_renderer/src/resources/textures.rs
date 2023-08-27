@@ -67,7 +67,9 @@ impl TextureManager {
     }
 
     pub fn texture_res(&self, handle: ResourceHandle) -> HellResult<&RenderTexture> {
-        self.textures.get(handle.idx).ok_or_else(|| HellErrorHelper::render_msg_err("failed to get texture"))
+        self.textures.get(handle.idx).ok_or_else(||
+            HellErrorHelper::render_msg_err("failed to get texture")
+        )
     }
 }
 

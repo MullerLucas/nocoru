@@ -127,7 +127,7 @@ impl VulkanPipeline {
 
         // push-constants
         // --------------
-        let mut push_constants: StackArray<vk::PushConstantRange, {config::VULKAN_SHADER_MAX_PUSH_CONSTANTS}> = StackArray::default();
+        let mut push_constants: StackArray<vk::PushConstantRange, {config::VULKAN_SHADER_MAX_PUSH_CONSTANTS}> = StackArray::from_defaults();
         for pcr in push_constant_infos {
             push_constants.push(
                 vk::PushConstantRange::builder()

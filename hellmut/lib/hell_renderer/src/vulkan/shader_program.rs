@@ -352,7 +352,7 @@ impl ShaderProgramBuilder {
         // create vertex-data
         // ------------------
         let mut vert_stride = 0_usize;
-        let mut vert_attrb_desc: StackArray<vk::VertexInputAttributeDescription, { Self::MAX_ATTRIBUTE_COUNT }> = StackArray::default();
+        let mut vert_attrb_desc: StackArray<vk::VertexInputAttributeDescription, { Self::MAX_ATTRIBUTE_COUNT }> = StackArray::from_defaults();
         self.attributes.as_slice().iter().enumerate().for_each(|(idx, attr)| {
             vert_attrb_desc.push(vk::VertexInputAttributeDescription::builder()
                 .location(idx as u32)
@@ -398,7 +398,7 @@ impl ShaderProgramBuilder {
 
         // determine used sets: descriptor-layouts + mem-ranges
         // ----------------------------------------------------
-        let mut set_desc_layouts: StackArray<vk::DescriptorSetLayout, {ShaderScope::SCOPE_COUNT}> = StackArray::default();
+        let mut set_desc_layouts: StackArray<vk::DescriptorSetLayout, {ShaderScope::SCOPE_COUNT}> = StackArray::from_defaults();
         let mut scope_desc_layouts: PerScope<Option<vk::DescriptorSetLayout>> = Default::default();
         let mut scope_ranges: PerScope<_> = Default::default();
         let mut main_buffer_size = 0;
@@ -431,7 +431,7 @@ impl ShaderProgramBuilder {
             // create layout
             // -------------
             let sampler_count = self.sampler_counts[idx];
-            let mut bindings: StackArray<vk::DescriptorSetLayoutBinding, 2> = StackArray::default();
+            let mut bindings: StackArray<vk::DescriptorSetLayoutBinding, 2> = StackArray::from_defaults();
 
             // main-layouts => uniform
             if idx != ShaderScope::Local as usize {
@@ -698,7 +698,7 @@ impl ShaderProgram {
         let idx = states.len();
         let desc_sets = VulkanDescriptorSetGroup::allocate_sets_for_layout(&self.ctx, layout, self.desc_pool)?;
         let (offset, stride) = self.calc_buffer_offset_and_size(scope, idx)?;
-        let mut textures = StackArray::default();
+        let mut textures = StackArray::from_defaults();
         tex.iter().for_each(|t| textures.push(*t));
 
         let state = ScopeState {
@@ -732,7 +732,7 @@ impl ShaderProgram {
         let desc_set = state.buffer_desc_set(frame.idx());
         let tex_handles = state.textures();
 
-        let mut write_desc: StackArray<vk::WriteDescriptorSet, 2> = StackArray::default();
+        let mut write_desc: StackArray<vk::WriteDescriptorSet, 2> = StackArray::from_defaults();
 
         // add buffer writes
         // -----------------
@@ -763,7 +763,7 @@ impl ShaderProgram {
                 return Err(HellErrorHelper::render_msg_err("sampler-count and tex-count do not match"));
             }
 
-            let mut image_infos: StackArray<vk::DescriptorImageInfo, {config::VULKAN_SHADER_MAX_GLOBAL_TEXTURES}> = StackArray::default();
+            let mut image_infos: StackArray<vk::DescriptorImageInfo, {config::VULKAN_SHADER_MAX_GLOBAL_TEXTURES}> = StackArray::from_defaults();
             for (idx, handle) in tex_handles.iter().enumerate() {
                 let tex = tex_man.texture_res(*handle)?;
 

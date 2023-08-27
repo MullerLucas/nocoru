@@ -59,21 +59,27 @@ pub struct HellErrorHelper;
 
 impl HellErrorHelper {
     pub fn render_msg_err(msg: impl Into<String>) -> HellError {
-        HellError::new(HellErrorKind::RenderError, HellErrorContent::Message(msg.into()))
+        let msg = msg.into();
+        eprintln!("[ERR]: render - {msg}");
+        HellError::new(HellErrorKind::RenderError, HellErrorContent::Message(msg))
     }
 
     pub fn request_msg_err(msg: impl Into<String>) -> HellError {
         let msg = msg.into();
-        eprintln!("[ERR]: {msg}");
+        eprintln!("[ERR]: request - {msg}");
         HellError::new(HellErrorKind::RequestError, HellErrorContent::Message(msg))
     }
 
     pub fn add_to_full_msg_err(msg: impl Into<String>) -> HellError {
-        HellError::new(HellErrorKind::AddToFullError, HellErrorContent::Message(msg.into()))
+        let msg = msg.into();
+        eprintln!("[ERR]: add_to_full - {msg}");
+        HellError::new(HellErrorKind::AddToFullError, HellErrorContent::Message(msg))
     }
 
     pub fn remove_from_empty_msg_err(msg: impl Into<String>) -> HellError {
-        HellError::new(HellErrorKind::RemoveFromEmptyError, HellErrorContent::Message(msg.into()))
+        let msg = msg.into();
+        eprintln!("[ERR]: remove_from_empty - {msg}");
+        HellError::new(HellErrorKind::RemoveFromEmptyError, HellErrorContent::Message(msg))
     }
 }
 

@@ -94,11 +94,11 @@ impl<T, const N: usize> StackArray<T, N> {
         where T: Clone
     {
         debug_assert!(self.len + value.len() <= N);
-        self.len += value.len();
-
         for (idx, val) in value.iter().cloned().enumerate() {
             self.data[idx + self.len].write(val);
         }
+
+        self.len += value.len();
     }
 
     #[inline]
@@ -152,15 +152,6 @@ impl<T, I, const N: usize> IndexMut<I> for StackArray<T, N>
         }
     }
 
-}
-
-impl<T: Clone, const N: usize> From<[T; N]> for StackArray<T, N> {
-    #[inline]
-    fn from(value: [T; N]) -> Self {
-        let mut result = Self::new();
-        result.extend_from_slice(&value);
-        result
-    }
 }
 
 impl<T: Clone, const N: usize> From<&[T]> for StackArray<T, N> {
